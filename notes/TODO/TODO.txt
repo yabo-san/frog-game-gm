@@ -1,0 +1,42 @@
+# TODO
+- abstracting magic numbers to an external file
+- flies
+- bees
+- beatles
+- butterflies
+- snail
+- worm
+- paintbrush
+- bombs
+- scoring
+- caterpillar
+- spiders
+- sprite stacking
+- attract mode cutscene
+- garegga difficulty + item drop chaining
+- combos + enemy chaining
+- game twist
+- ending sequence/credits
+- m2 gadgets
+- leaderboard
+- multiplayer
+- replays
+- parry system
+- script cleanup
+- instance layer
+
+## painbrush
+
+tapping or drawing a line through enemies (notsure which i like more) will inflict slow
+- small ink cost
+
+circling freezes enemies making them even easier to combo. circling multiple times will create an "enemy stinger" that can be sent flying just like a parried stringer. potential for upgrades either chaining the bounce or ricocheting off multiple walls. think of this as the games equivalent of options
+- big ink cost
+
+update: just prioritize remaking ribbit rampage's rogues galary for now'  
+start with the properties and then boot up the game to study enemy patterns
+
+## bombs
+still torn on this tbh  
+game is going to have normal extends like an arcade game but i would like to add soemthing like every extend where the death is a tactical decision to blow up as many enemies and in turn get ANOTHER extend. still debating how i want upgrades to work for this  
+maybe the sacrificial bomb can be the player cashing out an entire ink cartridge as opposed to a bespoke pickup???

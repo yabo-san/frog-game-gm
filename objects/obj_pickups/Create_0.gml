@@ -1,0 +1,1 @@
+pickup_type = "ink"; // "bomb" or "speed"
