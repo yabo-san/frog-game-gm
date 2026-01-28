@@ -9,6 +9,9 @@ if (moving) {
     var dist = point_distance(x, y, dest_x, dest_y);
 
     if (dist > tongue_speed) {
+		
+		move_direction = point_direction(x, y, dest_x, dest_y);
+
         x += dx / dist * tongue_speed;
         y += dy / dist * tongue_speed;
     } else {

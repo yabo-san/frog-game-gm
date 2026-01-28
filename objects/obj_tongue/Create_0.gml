@@ -12,3 +12,4 @@ tongue_length = 0;
 tongue_angle = 0;
 
 retracting = false;
+move_direction = 0;

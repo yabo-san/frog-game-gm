@@ -1,11 +1,15 @@
-function scr_parry(stinger) {
+/// @func scr_parry(stinger, tongue_direction)
+/// @desc Parries a stinger, making it fly in the tongue's direction
+/// @param stinger  The stinger instance to parry
+/// @param tongue_direction  The direction the tongue was moving
+function scr_parry(stinger, tongue_direction) {
     stinger.parried = true;
     stinger.homing = false;
-
-    // Calculate original trajectory relative to tongue
-    var dx = stinger.x - obj_tongue.x;
-    var dy = stinger.y - obj_tongue.y;
-    var angle = point_direction(0, 0, dx, dy);
-
-    motion_set(angle, stinger.speed); // apply new trajectory
+    
+    // Inherit the tongue's direction at moment of parry
+    stinger.direction = tongue_direction;
+    stinger.image_angle = stinger.direction;
+    
+    // Optional: boost speed when parried
+    // stinger.speed *= 1.5;
 }

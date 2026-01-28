@@ -1,23 +1,23 @@
-// --- Homing / movement code ---
-//if (homing && !parried && instance_exists(obj_player)) {
-//    target_x = obj_player.x;
-//    target_y = obj_player.y;
-//    var desired_dir = point_direction(x, y, target_x, target_y);
-//    var turn_speed = 10;
-//    var delta = angle_difference(direction, desired_dir);
-//    if (abs(delta) < turn_speed) direction = desired_dir;
-//    else direction += turn_speed * sign(delta);
-//}
+// --- Collision with tongue (parry) - CHECK FIRST ---
+var t = instance_place(x, y, obj_tongue);
+if (t != noone && !parried && t.moving && !t.retracting) {
+    // Capture tongue's direction BEFORE retracting
+    var tongue_dir = t.move_direction;
+    
+    // Parry the stinger with captured direction
+    scr_parry(id, tongue_dir);
+    
+    // Make tongue retract
+    t.retracting = true;
+}
+
+// --- Movement code - HAPPENS AFTER PARRY ---
 x += lengthdir_x(speed, direction);
 y += lengthdir_y(speed, direction);
+image_angle = direction;
 
-
-// --- Collision with tongue (parry) ---
-var t = instance_place(x, y, obj_tongue);
-if (t != noone && !parried && t.moving) {
-    scr_parry(id);
-    t.moving = false;
-}
+// Keep sprite pointing in direction
+image_angle = direction;  // ← Add this too so it visually updates
 
 // --- Collision with enemies when parried ---
 if (parried) {
