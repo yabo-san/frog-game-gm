@@ -1,10 +1,10 @@
 // Movement
-speed = 5;          // base speed
+speed = 2;          // base speed
 direction = 0;      // initial direction
 
 // Flags
 parried = false;    // has been parried
-homing = true;      // should home towards player
+homing = false;      // should home towards player
 
 // Owner tracking (for limiting active stingers)
 owner = noone;      // assigned when spawned

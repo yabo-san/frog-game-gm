@@ -21,9 +21,10 @@ if (!can_fire) {
 // --- Fire logic ---
 if (can_fire && instance_exists(obj_player) && active_stingers < max_active_stingers) {
     var s = instance_create_layer(x, y, "Instances", obj_stinger);
-    s.speed = 5;
+    // s.speed = 5;
     s.direction = point_direction(x, y, obj_player.x, obj_player.y);
-    s.owner = bee_id;        // assign owner to track active stingers
+    s.image_angle = s.direction + 270; 
+    s.owner = bee_id;
     can_fire = false;
     fire_timer = fire_cooldown;
 }

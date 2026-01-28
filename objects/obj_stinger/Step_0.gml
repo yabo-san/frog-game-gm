@@ -1,15 +1,16 @@
 // --- Homing / movement code ---
-if (homing && !parried && instance_exists(obj_player)) {
-    target_x = obj_player.x;
-    target_y = obj_player.y;
-    var desired_dir = point_direction(x, y, target_x, target_y);
-    var turn_speed = 10;
-    var delta = angle_difference(direction, desired_dir);
-    if (abs(delta) < turn_speed) direction = desired_dir;
-    else direction += turn_speed * sign(delta);
-}
+//if (homing && !parried && instance_exists(obj_player)) {
+//    target_x = obj_player.x;
+//    target_y = obj_player.y;
+//    var desired_dir = point_direction(x, y, target_x, target_y);
+//    var turn_speed = 10;
+//    var delta = angle_difference(direction, desired_dir);
+//    if (abs(delta) < turn_speed) direction = desired_dir;
+//    else direction += turn_speed * sign(delta);
+//}
 x += lengthdir_x(speed, direction);
 y += lengthdir_y(speed, direction);
+
 
 // --- Collision with tongue (parry) ---
 var t = instance_place(x, y, obj_tongue);
