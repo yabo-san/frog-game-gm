@@ -1,7 +1,8 @@
 draw_set_color(c_white);
 draw_text(10, 10, "Score: " + string(global.game_score));
 draw_text(10, 30, "Rank: " + string(global.rank));
-draw_text(10, 50, "Pickup Chain: " + string(global.pickup_chain));
+// draw_text(10, 50, "Pickup Chain: " + string(global.pickup_chain));
+draw_text(10, 50, "Combo" + string(global.current_chain));
 
 // Draw brush lines
 if (brush_drawing && ds_exists(brush_points, ds_type_list) && ds_list_size(brush_points) >= 4) {

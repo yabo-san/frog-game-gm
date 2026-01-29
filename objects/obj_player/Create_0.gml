@@ -9,3 +9,4 @@ follow_speed = 6; // keeps frog movement smooth
 tongue = noone;
 
 hp = 2
+

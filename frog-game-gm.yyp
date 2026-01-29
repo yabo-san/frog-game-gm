@@ -20,7 +20,7 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.2.212",
+    "IDEVersion":"2024.14.3.217",
   },
   "name":"frog-game-gm",
   "resources":[
@@ -45,6 +45,10 @@
     {"id":{"name":"scr_update_score","path":"scripts/scr_update_score/scr_update_score.yy",},},
     {"id":{"name":"spr_bee_eatable","path":"sprites/spr_bee_eatable/spr_bee_eatable.yy",},},
     {"id":{"name":"spr_bee","path":"sprites/spr_bee/spr_bee.yy",},},
+    {"id":{"name":"spr_chomp_1","path":"sprites/spr_chomp_1/spr_chomp_1.yy",},},
+    {"id":{"name":"spr_chomp_2","path":"sprites/spr_chomp_2/spr_chomp_2.yy",},},
+    {"id":{"name":"spr_chomp_3","path":"sprites/spr_chomp_3/spr_chomp_3.yy",},},
+    {"id":{"name":"spr_chomp","path":"sprites/spr_chomp/spr_chomp.yy",},},
     {"id":{"name":"spr_fly_eatable","path":"sprites/spr_fly_eatable/spr_fly_eatable.yy",},},
     {"id":{"name":"spr_fly","path":"sprites/spr_fly/spr_fly.yy",},},
     {"id":{"name":"spr_player","path":"sprites/spr_player/spr_player.yy",},},

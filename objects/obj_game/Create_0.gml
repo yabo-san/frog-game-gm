@@ -2,6 +2,7 @@
 global.game_score = 0;
 global.rank = 1;
 global.pickup_chain = 0;
+global.current_chain = 0;
 
 // Player reference (deferred creation)
 player = noone;

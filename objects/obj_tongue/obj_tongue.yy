@@ -32,8 +32,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_tongue",
-    "path":"sprites/spr_tongue/spr_tongue.yy",
+    "name":"spr_chomp",
+    "path":"sprites/spr_chomp/spr_chomp.yy",
   },
   "spriteMaskId":null,
   "visible":true,

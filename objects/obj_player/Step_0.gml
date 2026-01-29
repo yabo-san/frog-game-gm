@@ -1,6 +1,7 @@
 // --- Spawn tongue when clicking (only if no tongue exists) ---
 if (mouse_check_button_pressed(mb_left) && !instance_exists(tongue)) {
     tongue = instance_create_layer(x, y, "Instances", obj_tongue);
+    global.current_chain = 0
     tongue.frog = id;
     tongue.target_x = mouse_x;
     tongue.target_y = mouse_y;
@@ -32,6 +33,7 @@ if (eat_enemy != noone && eat_enemy.eatable) {
     var pts = eat_enemy.points;
     instance_destroy(eat_enemy);
     scr_update_score(pts);
+    global.current_chain += 1;
 }
 
 // --- Check collision with non-eatable enemies (DAMAGE PLAYER) ---
@@ -41,4 +43,4 @@ if (enemy != noone && !enemy.eatable) {
     // Optional: destroy the enemy on contact
     // instance_destroy(enemy);
 }
-show_debug_message(hp)
+// show_debug_message(hp)
