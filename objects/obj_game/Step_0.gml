@@ -45,7 +45,6 @@ if (mx != mouse_clamped_x || my != mouse_clamped_y) {
 }
 
 
-
 // --- Brush drawing input ---
 // Start drawing on right-click press
 if (mouse_check_button_pressed(mb_right)) {
@@ -57,32 +56,52 @@ if (mouse_check_button_pressed(mb_right)) {
 
 // Continue drawing while held
 if (brush_drawing && mouse_check_button(mb_right)) {
-    // Only add point if mouse moved enough (avoid duplicates)
     var last_x = brush_points[| ds_list_size(brush_points) - 2];
     var last_y = brush_points[| ds_list_size(brush_points) - 1];
     var dist = point_distance(last_x, last_y, mouse_clamped_x, mouse_clamped_y);
     
-    if (dist > 5) {  // Only add if moved at least 5 pixels
+    if (dist > 5) {
         ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+        
+        // Check if we just created an intersection
+        if (scr_path_has_intersection(brush_points)) {
+            // Create a zone from current path
+            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+            zone.polygon_points = ds_list_create();
+            ds_list_copy(zone.polygon_points, brush_points);
+            
+            // Clear and continue from current position
+            ds_list_clear(brush_points);
+            ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+            
+            show_debug_message("Loop closed, continuing to draw...");
+        }
     }
 }
 
 // Finish drawing on release
 if (brush_drawing && mouse_check_button_released(mb_right)) {
-    // Check if shape is closed (start and end points close together)
-    if (ds_list_size(brush_points) >= 4) {
+    if (ds_list_size(brush_points) >= 8) {  // At least 4 points
+        // Check if path crosses itself OR end is near start
+        var has_intersection = scr_path_has_intersection(brush_points);
+        
         var start_x = brush_points[| 0];
         var start_y = brush_points[| 1];
         var end_x = brush_points[| ds_list_size(brush_points) - 2];
         var end_y = brush_points[| ds_list_size(brush_points) - 1];
         var close_dist = point_distance(start_x, start_y, end_x, end_y);
         
-        if (close_dist < 30) {  // Grace distance for closing the loop
-            // Shape is closed! TODO: Create slow zone
-            show_debug_message("Closed shape created!");
+        if (has_intersection || close_dist < 50) {
+            // Valid closed area!
+            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+            zone.polygon_points = ds_list_create();
+            ds_list_copy(zone.polygon_points, brush_points);
+            show_debug_message("Slow zone created! Intersection: " + string(has_intersection));
+        } else {
+            show_debug_message("Not a closed area");
         }
     }
     
     brush_drawing = false;
-    ds_list_clear(brush_points);  // Clear after finishing
+    ds_list_clear(brush_points);
 }
