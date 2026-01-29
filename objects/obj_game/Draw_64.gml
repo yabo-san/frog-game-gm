@@ -6,7 +6,7 @@ draw_text(10, 50, "Pickup Chain: " + string(global.pickup_chain));
 // Draw brush lines
 if (brush_drawing && ds_exists(brush_points, ds_type_list) && ds_list_size(brush_points) >= 4) {
     draw_set_color(c_yellow);
-    draw_set_line_width(3);
+    //draw_set_line_width(3);
 
     for (var i = 0; i < ds_list_size(brush_points)-2; i += 2) {
         var x1 = brush_points[| i];

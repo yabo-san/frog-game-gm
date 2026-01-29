@@ -46,41 +46,43 @@ if (mx != mouse_clamped_x || my != mouse_clamped_y) {
 
 
 
+// --- Brush drawing input ---
+// Start drawing on right-click press
+if (mouse_check_button_pressed(mb_right)) {
+    brush_drawing = true;
+    ds_list_clear(brush_points);  // Clear previous drawing
+    // Add starting point
+    ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+}
 
+// Continue drawing while held
+if (brush_drawing && mouse_check_button(mb_right)) {
+    // Only add point if mouse moved enough (avoid duplicates)
+    var last_x = brush_points[| ds_list_size(brush_points) - 2];
+    var last_y = brush_points[| ds_list_size(brush_points) - 1];
+    var dist = point_distance(last_x, last_y, mouse_clamped_x, mouse_clamped_y);
+    
+    if (dist > 5) {  // Only add if moved at least 5 pixels
+        ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+    }
+}
 
-// --- Brush Start ---
-//if (mouse_check_button_pressed(mb_right)) {
-//    if (!ds_exists(brush_points, ds_type_list)) brush_points = ds_list_create();
-//    ds_list_clear(brush_points);
-//    brush_drawing = true;
-
-//    var mx = clamp(mouse_clamped_x, 0, view_wview[0]);
-//    var my = clamp(mouse_clamped_y, 0, view_hview[0]);
-//    ds_list_add(brush_points, mx);
-//    ds_list_add(brush_points, my);
-//}
-
-//// --- Brush Continue ---
-//if (brush_drawing && mouse_check_button(mb_right)) {
-//    var mx = clamp(mouse_clamped_x, 0, view_wview[0]);
-//    var my = clamp(mouse_clamped_y, 0, view_hview[0]);
-//    ds_list_add(brush_points, mx);
-//    ds_list_add(brush_points, my);
-//}
-
-//// --- Brush Finish ---
-//if (brush_drawing && mouse_check_button_released(mb_right)) {
-//    brush_drawing = false;
-
-//    if (ds_exists(brush_points, ds_type_list) && ds_list_size(brush_points) >= 6) {
-//        with (obj_enemy_base) {
-//            show_debug_message("here")
-//            if (point_in_polygon(x, y, brush_points)) {
-//                effect = "slow";
-//                effect_timer = 180; // 3 seconds
-//            }
-//        }
-//    }
-
-//    ds_list_clear(brush_points);
-//}
+// Finish drawing on release
+if (brush_drawing && mouse_check_button_released(mb_right)) {
+    // Check if shape is closed (start and end points close together)
+    if (ds_list_size(brush_points) >= 4) {
+        var start_x = brush_points[| 0];
+        var start_y = brush_points[| 1];
+        var end_x = brush_points[| ds_list_size(brush_points) - 2];
+        var end_y = brush_points[| ds_list_size(brush_points) - 1];
+        var close_dist = point_distance(start_x, start_y, end_x, end_y);
+        
+        if (close_dist < 30) {  // Grace distance for closing the loop
+            // Shape is closed! TODO: Create slow zone
+            show_debug_message("Closed shape created!");
+        }
+    }
+    
+    brush_drawing = false;
+    ds_list_clear(brush_points);  // Clear after finishing
+}
