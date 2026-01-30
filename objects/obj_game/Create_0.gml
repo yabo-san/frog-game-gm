@@ -35,3 +35,5 @@ window_set_cursor(cr_none);
 mouse_clamped_x = 320;
 mouse_clamped_y = 240;
 window_mouse_set(mouse_clamped_x, mouse_clamped_y);
+
+brush_just_closed = false;

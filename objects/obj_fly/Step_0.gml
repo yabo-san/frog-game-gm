@@ -27,5 +27,5 @@ if (move_timer > 0) {
         move_timer = irandom_range(60, 120);    // frames to move
     }
 }
-
+// show_debug_message("Fly speed_mult: " + string(speed_mult) + " | move_speed: " + string(move_speed));
 

@@ -1,3 +1,3 @@
 polygon_points = ds_list_create();
 
-lifetime = 300
+lifetime = 120

@@ -1,4 +1,4 @@
-// Decrease lifetime (optional)
+// Decrease lifetime
 lifetime -= 1;
 if (lifetime <= 0) {
     ds_list_destroy(polygon_points);
@@ -6,11 +6,11 @@ if (lifetime <= 0) {
     exit;
 }
 
-// Check all enemies and slow them if inside
+// Check all enemies and apply slow effect if inside
 with (obj_enemy_base) {
     if (point_in_polygon(x, y, other.polygon_points)) {
-        speed_mult = 0.3;  // 30% speed when inside
-    } else {
-        speed_mult = 1.0;  // Normal speed when outside
+        effect = "slow";
+        effect_timer = 2;  // Refresh timer (stays slow while in zone)
     }
+    // If not inside, let the effect naturally expire
 }

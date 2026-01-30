@@ -18,7 +18,8 @@ if (enemy_spawn_timer <= 0) {
         case 3: spawn_x = room_width + 32; spawn_y = irandom(room_height); break;
     }
 
-    var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
+    //var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
+    var enemy_type = obj_fly; // safe, must exist
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
     // Assign target safely
@@ -56,25 +57,32 @@ if (mouse_check_button_pressed(mb_right)) {
 
 // Continue drawing while held
 if (brush_drawing && mouse_check_button(mb_right)) {
-    var last_x = brush_points[| ds_list_size(brush_points) - 2];
-    var last_y = brush_points[| ds_list_size(brush_points) - 1];
-    var dist = point_distance(last_x, last_y, mouse_clamped_x, mouse_clamped_y);
+    var last_index = ds_list_size(brush_points) - 2;
     
-    if (dist > 5) {
-        ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+    // Only check if we have points
+    if (last_index >= 0) {
+        var last_x = brush_points[| last_index];
+        var last_y = brush_points[| last_index + 1];
+        var dist = point_distance(last_x, last_y, mouse_clamped_x, mouse_clamped_y);
         
-        // Check if we just created an intersection
+        if (dist > 5) {
+            ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
+            
+            // Check if we just created an intersection
         if (scr_path_has_intersection(brush_points)) {
-            // Create a zone from current path
+            // Create zone
             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
             zone.polygon_points = ds_list_create();
             ds_list_copy(zone.polygon_points, brush_points);
             
-            // Clear and continue from current position
+            // Clear and restart
             ds_list_clear(brush_points);
             ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
             
-            show_debug_message("Loop closed, continuing to draw...");
+            brush_just_closed = true;  // ← Flag to skip drawing this frame
+            
+            show_debug_message("Loop closed!");
+            }
         }
     }
 }
@@ -96,9 +104,9 @@ if (brush_drawing && mouse_check_button_released(mb_right)) {
             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
             zone.polygon_points = ds_list_create();
             ds_list_copy(zone.polygon_points, brush_points);
-            show_debug_message("Slow zone created! Intersection: " + string(has_intersection));
+            // show_debug_message("Slow zone created! Intersection: " + string(has_intersection));
         } else {
-            show_debug_message("Not a closed area");
+            // show_debug_message("Not a closed area");
         }
     }
     

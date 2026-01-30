@@ -17,12 +17,11 @@ effect = "";
 effect_timer = 0;
 speed_mult = 1;
 
+slow_stacks = 0;
+
 
 // Target (for off-screen spawning)
 target_x = noone;
 target_y = noone;
 
 move_speed = 1; // default value
-
-
-
