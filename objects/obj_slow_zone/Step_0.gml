@@ -7,9 +7,9 @@ if (lifetime <= 0) {
 
 // Freeze zones set enemies to 0 speed
 if (is_freeze_zone) {
-    with (obj_enemy_base) {
-        if (point_in_polygon(x, y, other.polygon_points)) {
-            speed_mult = 0;  // Frozen
+        with (obj_enemy_base) {
+            if (point_in_polygon(x, y, other.polygon_points)) {
+                speed_mult = 0;  // Frozen
+            }
         }
     }
-}

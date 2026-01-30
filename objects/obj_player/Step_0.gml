@@ -3,8 +3,8 @@ if (mouse_check_button_pressed(mb_left) && !instance_exists(tongue)) {
     tongue = instance_create_layer(x, y, "Instances", obj_tongue);
     global.current_chain = 0
     tongue.frog = id;
-    tongue.target_x = mouse_x;
-    tongue.target_y = mouse_y;
+    tongue.target_x = obj_game.mouse_game_x;
+    tongue.target_y = obj_game.mouse_game_y;
     tongue.moving = true;
     tongue.retracting = false;
 }

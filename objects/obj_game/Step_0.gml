@@ -1,3 +1,52 @@
+// --- Fullscreen toggle ---
+if (keyboard_check_pressed(ord("F")) && !is_fullscreen) {
+    window_set_fullscreen(true);
+    is_fullscreen = true;
+    window_mouse_set(window_get_width() / 2, window_get_height() / 2);
+}
+
+if (keyboard_check_pressed(ord("W")) && is_fullscreen) {
+    window_set_fullscreen(false);
+    is_fullscreen = false;
+}
+
+// --- Mouse handling ---
+if (is_fullscreen) {
+    var center_x = window_get_width() / 2;
+    var center_y = window_get_height() / 2;
+    
+    var mx = window_mouse_get_x();
+    var my = window_mouse_get_y();
+    
+    var dx = mx - center_x;
+    var dy = my - center_y;
+    
+    mouse_game_x = clamp(mouse_game_x + dx * 0.5, 0, 639);
+    mouse_game_y = clamp(mouse_game_y + dy * 0.5, 0, 479);
+    
+    window_mouse_set(center_x, center_y);
+    
+} else {
+    var mx = window_mouse_get_x();
+    var my = window_mouse_get_y();
+    var scale = window_get_width() / 640;
+    
+    mouse_game_x = mx / scale;
+    mouse_game_y = my / scale;
+    
+    if (mouse_game_x < 0 || mouse_game_x > 639 || mouse_game_y < 0 || mouse_game_y > 479) {
+        mouse_game_x = clamp(mouse_game_x, 0, 639);
+        mouse_game_y = clamp(mouse_game_y, 0, 479);
+        window_mouse_set(mouse_game_x * scale, mouse_game_y * scale);
+    }
+}
+
+mouse_clamped_x = mouse_game_x;
+mouse_clamped_y = mouse_game_y;
+
+// --- Ensure player exists ---
+// [rest of your code continues here...]
+
 // --- Ensure player exists ---
 if (!instance_exists(player)) {
     player = instance_create_layer(room_width/2, room_height/2, "Instances", obj_player);
@@ -32,19 +81,6 @@ if (enemy_spawn_timer <= 0) {
     }
 }
 
-// Get raw mouse position
-var mx = device_mouse_x(0);
-var my = device_mouse_y(0);
-
-// Clamp to playfield bounds
-mouse_clamped_x = clamp(mx, 0, 639);
-mouse_clamped_y = clamp(my, 0, 479);
-
-// Force cursor back inside window
-if (mx != mouse_clamped_x || my != mouse_clamped_y) {
-    window_mouse_set(mouse_clamped_x, mouse_clamped_y);
-}
-
 
 // --- Brush drawing input ---
 // Start drawing on right-click press
@@ -69,42 +105,38 @@ if (brush_drawing && mouse_check_button(mb_right)) {
             
             var num_points = ds_list_size(brush_points) / 2;
             if (num_points >= 10) {
-                // Check if we've circled back to start (primary method)
-                var start_x = brush_points[| 0];
-                var start_y = brush_points[| 1];
-                var current_x = brush_points[| ds_list_size(brush_points) - 2];
-                var current_y = brush_points[| ds_list_size(brush_points) - 1];
-                var loop_dist = point_distance(start_x, start_y, current_x, current_y);
+                // Check for intersection
+                var intersection = scr_path_has_intersection(brush_points);
                 
-                // ALSO check for intersection (for figure-8s)
-                var has_intersection = scr_path_has_intersection(brush_points);
-                
-                if (loop_dist < 20 || has_intersection) {
+                if (intersection[0]) {  // Found intersection!
+                    // Extract just the loop
+                    var loop = scr_extract_loop(brush_points, intersection[1], intersection[2], intersection[3], intersection[4]);
+                    
                     brush_circles_completed += 1;
                     
                     if (brush_circles_completed < 3) {
-                        // First or second circle - create visual slow zone + apply stacks
+                        // Create slow zone with loop
                         var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                        zone.polygon_points = ds_list_create();
-                        ds_list_copy(zone.polygon_points, brush_points);
-                        zone.is_freeze_zone = false;  // Green slow zone
+                        zone.polygon_points = loop;  // Use the extracted loop
+                        zone.is_freeze_zone = false;
                         
                         with (obj_enemy_base) {
-                            if (point_in_polygon(x, y, other.brush_points)) {
+                            if (point_in_polygon(x, y, loop)) {
                                 slow_stacks += 1;
                             }
                         }
                     } else {
-                        // Third circle - freeze zone (blue)
+                        // Freeze zone
                         var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                        zone.polygon_points = ds_list_create();
-                        ds_list_copy(zone.polygon_points, brush_points);
-                        zone.is_freeze_zone = true;  // Blue freeze zone
-                        
-                        show_debug_message("FREEZE ZONE CREATED!");
+                        zone.polygon_points = loop;
+                        zone.is_freeze_zone = true;
                     }
                     
+                    // Continue drawing from intersection point
                     ds_list_clear(brush_points);
+                    ds_list_add(brush_points, intersection[3], intersection[4]);
+                    
+                    show_debug_message("Loop " + string(brush_circles_completed) + " detected!");
                 }
             }
         }
