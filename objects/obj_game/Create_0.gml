@@ -37,3 +37,4 @@ mouse_clamped_y = 240;
 window_mouse_set(mouse_clamped_x, mouse_clamped_y);
 
 brush_just_closed = false;
+brush_circles_completed = 0;

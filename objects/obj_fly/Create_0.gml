@@ -6,7 +6,7 @@ sprite_normal = spr_fly;
 sprite_eatable = spr_fly_eatable;
 
 // Movement
-//move_speed = 2;
+move_speed = 2;
 speed_mult = 1;
 
 // Random movement timer

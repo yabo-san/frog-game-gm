@@ -18,8 +18,8 @@ if (enemy_spawn_timer <= 0) {
         case 3: spawn_x = room_width + 32; spawn_y = irandom(room_height); break;
     }
 
-    //var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
-    var enemy_type = obj_fly; // safe, must exist
+    var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
+    //var enemy_type = obj_fly; // safe, must exist
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
     // Assign target safely
@@ -59,7 +59,6 @@ if (mouse_check_button_pressed(mb_right)) {
 if (brush_drawing && mouse_check_button(mb_right)) {
     var last_index = ds_list_size(brush_points) - 2;
     
-    // Only check if we have points
     if (last_index >= 0) {
         var last_x = brush_points[| last_index];
         var last_y = brush_points[| last_index + 1];
@@ -68,48 +67,55 @@ if (brush_drawing && mouse_check_button(mb_right)) {
         if (dist > 5) {
             ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
             
-            // Check if we just created an intersection
-        if (scr_path_has_intersection(brush_points)) {
-            // Create zone
-            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-            zone.polygon_points = ds_list_create();
-            ds_list_copy(zone.polygon_points, brush_points);
-            
-            // Clear and restart
-            ds_list_clear(brush_points);
-            ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
-            
-            brush_just_closed = true;  // ← Flag to skip drawing this frame
-            
-            show_debug_message("Loop closed!");
+            var num_points = ds_list_size(brush_points) / 2;
+            if (num_points >= 10) {
+                // Check if we've circled back to start (primary method)
+                var start_x = brush_points[| 0];
+                var start_y = brush_points[| 1];
+                var current_x = brush_points[| ds_list_size(brush_points) - 2];
+                var current_y = brush_points[| ds_list_size(brush_points) - 1];
+                var loop_dist = point_distance(start_x, start_y, current_x, current_y);
+                
+                // ALSO check for intersection (for figure-8s)
+                var has_intersection = scr_path_has_intersection(brush_points);
+                
+                if (loop_dist < 20 || has_intersection) {
+                    brush_circles_completed += 1;
+                    
+                    if (brush_circles_completed < 3) {
+                        // First or second circle - create visual slow zone + apply stacks
+                        var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+                        zone.polygon_points = ds_list_create();
+                        ds_list_copy(zone.polygon_points, brush_points);
+                        zone.is_freeze_zone = false;  // Green slow zone
+                        
+                        with (obj_enemy_base) {
+                            if (point_in_polygon(x, y, other.brush_points)) {
+                                slow_stacks += 1;
+                            }
+                        }
+                    } else {
+                        // Third circle - freeze zone (blue)
+                        var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+                        zone.polygon_points = ds_list_create();
+                        ds_list_copy(zone.polygon_points, brush_points);
+                        zone.is_freeze_zone = true;  // Blue freeze zone
+                        
+                        show_debug_message("FREEZE ZONE CREATED!");
+                    }
+                    
+                    ds_list_clear(brush_points);
+                }
             }
         }
+    } else {
+        ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
     }
 }
 
-// Finish drawing on release
+
 if (brush_drawing && mouse_check_button_released(mb_right)) {
-    if (ds_list_size(brush_points) >= 8) {  // At least 4 points
-        // Check if path crosses itself OR end is near start
-        var has_intersection = scr_path_has_intersection(brush_points);
-        
-        var start_x = brush_points[| 0];
-        var start_y = brush_points[| 1];
-        var end_x = brush_points[| ds_list_size(brush_points) - 2];
-        var end_y = brush_points[| ds_list_size(brush_points) - 1];
-        var close_dist = point_distance(start_x, start_y, end_x, end_y);
-        
-        if (has_intersection || close_dist < 50) {
-            // Valid closed area!
-            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-            zone.polygon_points = ds_list_create();
-            ds_list_copy(zone.polygon_points, brush_points);
-            // show_debug_message("Slow zone created! Intersection: " + string(has_intersection));
-        } else {
-            // show_debug_message("Not a closed area");
-        }
-    }
-    
     brush_drawing = false;
+    brush_circles_completed = 0;  // ← Reset for next brush session
     ds_list_clear(brush_points);
 }
