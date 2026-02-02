@@ -8,3 +8,11 @@ reaction_parried = "immune"; // cannot be affected by stingers
 
 sprite_normal = spr_bee;
 sprite_eatable = spr_bee_eatable;
+
+//copy from fly for movement:
+// Random movement timer
+move_timer = irandom_range(60, 120);  // frames to move in current direction
+stop_timer = 0;                       // frames to pause after moving
+
+// Random direction in degrees (0–359)
+move_direction = irandom(359);

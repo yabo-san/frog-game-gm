@@ -25,3 +25,7 @@ target_x = noone;
 target_y = noone;
 
 move_speed = 1; // default value
+
+slow_stacks = 0;
+slow_timer = 0;  // How long the current slow lasts
+slow_duration = 180;  // 3 seconds per stack (at 60fps)

@@ -67,8 +67,8 @@ if (enemy_spawn_timer <= 0) {
         case 3: spawn_x = room_width + 32; spawn_y = irandom(room_height); break;
     }
 
-    var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
-    //var enemy_type = obj_fly; // safe, must exist
+    //var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
+    var enemy_type = obj_fly; // safe, must exist
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
     // Assign target safely
@@ -84,7 +84,7 @@ if (enemy_spawn_timer <= 0) {
 
 // --- Brush drawing input ---
 // Start drawing on right-click press
-if (mouse_check_button_pressed(mb_right)) {
+if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("Z"))) {
     brush_drawing = true;
     ds_list_clear(brush_points);  // Clear previous drawing
     // Add starting point
@@ -92,7 +92,7 @@ if (mouse_check_button_pressed(mb_right)) {
 }
 
 // Continue drawing while held
-if (brush_drawing && mouse_check_button(mb_right)) {
+if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z")))) {
     var last_index = ds_list_size(brush_points) - 2;
     
     if (last_index >= 0) {
@@ -120,11 +120,12 @@ if (brush_drawing && mouse_check_button(mb_right)) {
                         zone.polygon_points = loop;  // Use the extracted loop
                         zone.is_freeze_zone = false;
                         
-                        with (obj_enemy_base) {
-                            if (point_in_polygon(x, y, loop)) {
-                                slow_stacks += 1;
-                            }
+                    with (obj_enemy_base) {
+                        if (point_in_polygon(x, y, loop)) {
+                            slow_stacks += 1;
+                            slow_timer = slow_duration;  // Refresh the timer
                         }
+                    }
                     } else {
                         // Freeze zone
                         var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
@@ -145,8 +146,7 @@ if (brush_drawing && mouse_check_button(mb_right)) {
     }
 }
 
-
-if (brush_drawing && mouse_check_button_released(mb_right)) {
+if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_released(ord("Z")))) {
     brush_drawing = false;
     brush_circles_completed = 0;  // ← Reset for next brush session
     ds_list_clear(brush_points);
