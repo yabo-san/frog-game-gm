@@ -1,4 +1,11 @@
-// --- Collision with tongue (parry) - CHECK FIRST ---
+// Only stop if inside a meteor zone (not regular freeze zones)
+with (obj_slow_zone) {
+    if (is_meteor && !meteor_moving && point_in_polygon(other.x, other.y, polygon_points)) {
+        other.speed = 0;
+        exit;
+    }
+}
+
 var t = instance_place(x, y, obj_tongue);
 if (t != noone && !parried && t.moving && !t.retracting) {
     // Capture tongue's direction BEFORE retracting
@@ -16,8 +23,6 @@ x += lengthdir_x(speed, direction);
 y += lengthdir_y(speed, direction);
 image_angle = direction;
 
-// Keep sprite pointing in direction
-image_angle = direction;  // ← Add this too so it visually updates
 
 // --- Collision with enemies when parried ---
 if (parried) {

@@ -9,3 +9,7 @@ meteor_speed = 0;
 bounces_remaining = 0;
 meteor_x = 0;  // Center of meteor
 meteor_y = 0;
+
+// Meteor tracking variables
+meteor_stinger_count = 0;  // Will become speed multiplier
+meteor_enemy_count = 0;    // Will become bounce count

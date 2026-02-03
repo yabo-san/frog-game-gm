@@ -133,35 +133,36 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                             zone.is_freeze_zone = true;
                             zone.lifetime = 300;
                             
-                            // Check for stinger inside
-                            var has_stinger = false;
+                            // Count stingers inside
                             with (obj_stinger) {
-                                if (parried && point_in_polygon(x, y, loop)) {
-                                    has_stinger = true;
-                                    show_debug_message("STINGER IN ZONE!");
-                                    zone.captured_stinger_direction = direction;  // Capture trajectory
-                                    instance_destroy();  // Stinger gets absorbed
-                                    break;
+                                if (point_in_polygon(x, y, loop)) {
+                                    zone.meteor_stinger_count++;
+                                    instance_destroy();
                                 }
                             }
                             
-                            // Count enemies inside for bounce count
-                            var enemy_count = 0;
+                            // Count enemies and destroy them
                             with (obj_enemy_base) {
                                 if (point_in_polygon(x, y, loop)) {
-                                    slow_level = 3;
-                                    slow_timer = slow_duration;
-                                    vulnerability_timer = 0;
-                                    enemy_count++;
+                                    zone.meteor_enemy_count++;
+                                    instance_destroy();
                                 }
                             }
                             
-                            // If stinger found, turn into meteor
-                            if (has_stinger) {
+                            // If stinger was found, make it a meteor
+                            if (zone.meteor_stinger_count > 0) {
                                 zone.is_meteor = true;
-                                zone.meteor_direction = zone.captured_stinger_direction;
-                                zone.meteor_speed = 8;  // Adjust speed
-                                zone.bounces_remaining = enemy_count;
+                                zone.meteor_moving = false;
+                                
+                                // Calculate center
+                                var sum_x = 0, sum_y = 0, count = 0;
+                                for (var i = 0; i < ds_list_size(loop); i += 2) {
+                                    sum_x += loop[| i];
+                                    sum_y += loop[| i + 1];
+                                    count++;
+                                }
+                                zone.meteor_x = sum_x / count;
+                                zone.meteor_y = sum_y / count;
                             }
                         }
                     
