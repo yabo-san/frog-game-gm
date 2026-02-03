@@ -1,7 +1,7 @@
 // Only stop if inside a meteor zone (not regular freeze zones)
 with (obj_slow_zone) {
-    if (is_meteor && !meteor_moving && point_in_polygon(other.x, other.y, polygon_points)) {
-        other.speed = 0;
+    if (is_meteor && point_in_polygon(other.x, other.y, polygon_points)) {
+        instance_destroy(other.id);  // Just destroy stingers that touch
         exit;
     }
 }

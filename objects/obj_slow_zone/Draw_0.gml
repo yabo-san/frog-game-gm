@@ -1,19 +1,17 @@
 if (ds_list_size(polygon_points) >= 4) {
     draw_set_alpha(0.5);
     
-    // Fill meteor using triangle fan from first point
+    // Fill meteor with proper polygon
     if (is_meteor) {
         draw_set_color(c_red);
-        var cx = polygon_points[| 0];
-        var cy = polygon_points[| 1];
-        for (var i = 2; i < ds_list_size(polygon_points) - 2; i += 2) {
-            draw_triangle_color(
-                cx, cy, c_red,
-                polygon_points[| i], polygon_points[| i + 1], c_red,
-                polygon_points[| i + 2], polygon_points[| i + 3], c_red,
-                0.5
-            );
+        draw_primitive_begin(pr_trianglefan);
+        
+        // Add all points
+        for (var i = 0; i < ds_list_size(polygon_points); i += 2) {
+            draw_vertex(polygon_points[| i], polygon_points[| i + 1]);
         }
+        
+        draw_primitive_end();
     }
     
     // Set outline color

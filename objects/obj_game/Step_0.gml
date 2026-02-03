@@ -64,8 +64,8 @@ if (enemy_spawn_timer <= 0) {
         case 3: spawn_x = room_width + 32; spawn_y = irandom(room_height); break;
     }
 
-    //var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
-    var enemy_type = obj_bee; 
+    var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
+    //var enemy_type = obj_bee; 
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
     // Assign target safely
@@ -141,16 +141,17 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                                 }
                             }
                             
-                            // Count enemies and destroy them
-                            with (obj_enemy_base) {
-                                if (point_in_polygon(x, y, loop)) {
-                                    zone.meteor_enemy_count++;
-                                    instance_destroy();
-                                }
-                            }
-                            
-                            // If stinger was found, make it a meteor
+                            // Handle enemies based on whether this becomes a meteor
                             if (zone.meteor_stinger_count > 0) {
+                                // METEOR: Destroy enemies and count them
+                                with (obj_enemy_base) {
+                                    if (point_in_polygon(x, y, loop)) {
+                                        zone.meteor_enemy_count++;
+                                        instance_destroy();
+                                    }
+                                }
+                                
+                                // Set up meteor
                                 zone.is_meteor = true;
                                 zone.meteor_moving = false;
                                 
@@ -163,6 +164,15 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                                 }
                                 zone.meteor_x = sum_x / count;
                                 zone.meteor_y = sum_y / count;
+                            } else {
+                                // FREEZE ZONE: Just freeze enemies, don't destroy
+                                with (obj_enemy_base) {
+                                    if (point_in_polygon(x, y, loop)) {
+                                        slow_level = 3;
+                                        slow_timer = slow_duration;
+                                        vulnerability_timer = 0;
+                                    }
+                                }
                             }
                         }
                     

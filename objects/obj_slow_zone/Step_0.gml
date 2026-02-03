@@ -38,14 +38,23 @@ if (is_meteor) {
             polygon_points[| i + 1] += dy;
         }
         
-        // Wall bouncing
+        // Wall bouncing - check AFTER movement
+        var hit_wall = false;
         if (meteor_x <= 0 || meteor_x >= room_width) {
             meteor_direction = 180 - meteor_direction;
-            bounces_remaining -= 1;
+            meteor_x = clamp(meteor_x, 0, room_width);  // Keep in bounds
+            hit_wall = true;
         }
         if (meteor_y <= 0 || meteor_y >= room_height) {
             meteor_direction = -meteor_direction;
+            meteor_y = clamp(meteor_y, 0, room_height);  // Keep in bounds
+            hit_wall = true;
+        }
+        
+        // Only decrement bounces if we actually hit a wall this frame
+        if (hit_wall) {
             bounces_remaining -= 1;
+            show_debug_message("BOUNCE! Remaining: " + string(bounces_remaining));
         }
         
         // Kill enemies on contact
