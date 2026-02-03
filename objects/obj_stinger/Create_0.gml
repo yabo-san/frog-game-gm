@@ -1,5 +1,5 @@
 // Movement
-speed = 2;          // base speed
+speed = 1;          // base speed
 direction = 0;      // initial direction
 
 // Flags

@@ -45,9 +45,6 @@ mouse_clamped_x = mouse_game_x;
 mouse_clamped_y = mouse_game_y;
 
 // --- Ensure player exists ---
-// [rest of your code continues here...]
-
-// --- Ensure player exists ---
 if (!instance_exists(player)) {
     player = instance_create_layer(room_width/2, room_height/2, "Instances", obj_player);
 }
@@ -68,7 +65,7 @@ if (enemy_spawn_timer <= 0) {
     }
 
     //var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
-    var enemy_type = obj_fly; // safe, must exist
+    var enemy_type = obj_bee; 
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
     // Assign target safely
@@ -119,19 +116,54 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                         var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
                         zone.polygon_points = loop;  // Use the extracted loop
                         zone.is_freeze_zone = false;
+                        zone.lifetime = 120;
                         
-                    with (obj_enemy_base) {
-                        if (point_in_polygon(x, y, loop)) {
-                            slow_stacks += 1;
-                            slow_timer = slow_duration;  // Refresh the timer
+                        with (obj_enemy_base) {
+                            if (point_in_polygon(x, y, loop)) {
+                                // Always allow tagging, no vulnerability check
+                                slow_level = min(slow_level + 1, 3);
+                                slow_timer = slow_duration;  // Refresh timer
+                                vulnerability_timer = 0;
+                            }
                         }
-                    }
-                    } else {
-                        // Freeze zone
-                        var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                        zone.polygon_points = loop;
-                        zone.is_freeze_zone = true;
-                    }
+                        } else {
+                            // Circle 3: freeze zone
+                            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+                            zone.polygon_points = loop;
+                            zone.is_freeze_zone = true;
+                            zone.lifetime = 300;
+                            
+                            // Check for stinger inside
+                            var has_stinger = false;
+                            with (obj_stinger) {
+                                if (parried && point_in_polygon(x, y, loop)) {
+                                    has_stinger = true;
+                                    show_debug_message("STINGER IN ZONE!");
+                                    zone.captured_stinger_direction = direction;  // Capture trajectory
+                                    instance_destroy();  // Stinger gets absorbed
+                                    break;
+                                }
+                            }
+                            
+                            // Count enemies inside for bounce count
+                            var enemy_count = 0;
+                            with (obj_enemy_base) {
+                                if (point_in_polygon(x, y, loop)) {
+                                    slow_level = 3;
+                                    slow_timer = slow_duration;
+                                    vulnerability_timer = 0;
+                                    enemy_count++;
+                                }
+                            }
+                            
+                            // If stinger found, turn into meteor
+                            if (has_stinger) {
+                                zone.is_meteor = true;
+                                zone.meteor_direction = zone.captured_stinger_direction;
+                                zone.meteor_speed = 8;  // Adjust speed
+                                zone.bounces_remaining = enemy_count;
+                            }
+                        }
                     
                     // Continue drawing from intersection point
                     ds_list_clear(brush_points);

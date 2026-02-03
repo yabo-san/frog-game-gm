@@ -7,25 +7,22 @@ reaction_parried = "damage";
 
 // Eatable system
 eatable = false;
-sprite_normal = -1 //s_enemy_placeholder;
-sprite_eatable = -1 //s_enemy_placeholder_eat;
+sprite_normal = -1;
+sprite_eatable = -1;
 
 // Default properties
 hp = 1;
 points = 10;
-effect = "";
-effect_timer = 0;
 speed_mult = 1;
-
-slow_stacks = 0;
-
+move_speed = 1;
 
 // Target (for off-screen spawning)
 target_x = noone;
 target_y = noone;
 
-move_speed = 1; // default value
-
-slow_stacks = 0;
-slow_timer = 0;  // How long the current slow lasts
-slow_duration = 180;  // 3 seconds per stack (at 60fps)
+// Slow tagging system (NEW)
+slow_level = 0;              // 0, 1, 2, or 3 (frozen)
+slow_timer = 0;              // Active slow duration
+vulnerability_timer = 0;     // Window to receive next tag
+slow_duration = 180;         // 3 seconds (at 60fps)
+vulnerability_duration = 120; // 2 seconds window

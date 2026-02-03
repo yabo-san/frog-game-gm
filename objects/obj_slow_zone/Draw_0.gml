@@ -1,10 +1,12 @@
 // Draw the zone outline
 if (ds_list_size(polygon_points) >= 4) {
     // Set color based on zone type
-    if (is_freeze_zone) {
+    if (is_meteor) {
+        draw_set_color(c_red);  // Red for meteor
+    } else if (is_freeze_zone) {
         draw_set_color(c_aqua);  // Blue for freeze
     } else {
-        draw_set_color(c_lime);  // Saturated green for slow
+        draw_set_color(c_lime);  // Green for slow
     }
     
     draw_set_alpha(0.5);
@@ -26,3 +28,6 @@ if (ds_list_size(polygon_points) >= 4) {
     
     draw_set_alpha(1);
 }
+
+draw_set_color(c_white);
+draw_text(polygon_points[| 0], polygon_points[| 1] - 10, string(lifetime));
