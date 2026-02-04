@@ -1,3 +1,7 @@
+if (keyboard_check_pressed(ord("R"))) {
+    game_restart();
+}
+
 // --- Fullscreen toggle ---
 if (keyboard_check_pressed(ord("F")) && !is_fullscreen) {
     window_set_fullscreen(true);
@@ -25,7 +29,6 @@ if (is_fullscreen) {
     mouse_game_y = clamp(mouse_game_y + dy * 0.5, 0, 479);
     
     window_mouse_set(center_x, center_y);
-    
 } else {
     var mx = window_mouse_get_x();
     var my = window_mouse_get_y();
@@ -49,6 +52,12 @@ if (!instance_exists(player)) {
     player = instance_create_layer(room_width/2, room_height/2, "Instances", obj_player);
 }
 
+// --- Ensure brush exists and has player reference ---
+if (!instance_exists(brush)) {
+    brush = instance_create_layer(0, 0, "Instances", obj_brush);
+}
+brush.player = player;
+
 // --- Enemy spawning ---
 enemy_spawn_timer -= 1;
 if (enemy_spawn_timer <= 0) {
@@ -64,11 +73,9 @@ if (enemy_spawn_timer <= 0) {
         case 3: spawn_x = room_width + 32; spawn_y = irandom(room_height); break;
     }
 
-    var enemy_type = choose(obj_bee, obj_fly, obj_snail); // safe, must exist
-    //var enemy_type = obj_bee; 
+    var enemy_type = choose(obj_bee, obj_fly, obj_snail);
     var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
 
-    // Assign target safely
     if (instance_exists(player)) {
         e.target_x = player.x;
         e.target_y = player.y;
@@ -76,121 +83,4 @@ if (enemy_spawn_timer <= 0) {
         e.target_x = room_width/2;
         e.target_y = room_height/2;
     }
-}
-
-
-// --- Brush drawing input ---
-// Start drawing on right-click press
-if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("Z"))) {
-    brush_drawing = true;
-    ds_list_clear(brush_points);  // Clear previous drawing
-    // Add starting point
-    ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
-}
-
-// Continue drawing while held
-if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z")))) {
-    var last_index = ds_list_size(brush_points) - 2;
-    
-    if (last_index >= 0) {
-        var last_x = brush_points[| last_index];
-        var last_y = brush_points[| last_index + 1];
-        var dist = point_distance(last_x, last_y, mouse_clamped_x, mouse_clamped_y);
-        
-        if (dist > 5) {
-            ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
-            
-            var num_points = ds_list_size(brush_points) / 2;
-            if (num_points >= 10) {
-                // Check for intersection
-                var intersection = scr_path_has_intersection(brush_points);
-                
-                if (intersection[0]) {  // Found intersection!
-                    // Extract just the loop
-                    var loop = scr_extract_loop(brush_points, intersection[1], intersection[2], intersection[3], intersection[4]);
-                    
-                    brush_circles_completed += 1;
-                    
-                    if (brush_circles_completed < 3) {
-                        // Create slow zone with loop
-                        var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                        zone.polygon_points = loop;  // Use the extracted loop
-                        zone.is_freeze_zone = false;
-                        zone.lifetime = 120;
-                        
-                        with (obj_enemy_base) {
-                            if (point_in_polygon(x, y, loop)) {
-                                // Always allow tagging, no vulnerability check
-                                slow_level = min(slow_level + 1, 3);
-                                slow_timer = slow_duration;  // Refresh timer
-                                vulnerability_timer = 0;
-                            }
-                        }
-                        } else {
-                            // Circle 3: freeze zone
-                            var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                            zone.polygon_points = loop;
-                            zone.is_freeze_zone = true;
-                            zone.lifetime = 300;
-                            
-                            // Count stingers inside
-                            with (obj_stinger) {
-                                if (point_in_polygon(x, y, loop)) {
-                                    zone.meteor_stinger_count++;
-                                    instance_destroy();
-                                }
-                            }
-                            
-                            // Handle enemies based on whether this becomes a meteor
-                            if (zone.meteor_stinger_count > 0) {
-                                // METEOR: Destroy enemies and count them
-                                with (obj_enemy_base) {
-                                    if (point_in_polygon(x, y, loop)) {
-                                        zone.meteor_enemy_count++;
-                                        instance_destroy();
-                                    }
-                                }
-                                
-                                // Set up meteor
-                                zone.is_meteor = true;
-                                zone.meteor_moving = false;
-                                
-                                // Calculate center
-                                var sum_x = 0, sum_y = 0, count = 0;
-                                for (var i = 0; i < ds_list_size(loop); i += 2) {
-                                    sum_x += loop[| i];
-                                    sum_y += loop[| i + 1];
-                                    count++;
-                                }
-                                zone.meteor_x = sum_x / count;
-                                zone.meteor_y = sum_y / count;
-                            } else {
-                                // FREEZE ZONE: Just freeze enemies, don't destroy
-                                with (obj_enemy_base) {
-                                    if (point_in_polygon(x, y, loop)) {
-                                        slow_level = 3;
-                                        slow_timer = slow_duration;
-                                        vulnerability_timer = 0;
-                                    }
-                                }
-                            }
-                        }
-                    
-                    // Continue drawing from intersection point
-                    ds_list_clear(brush_points);
-                    ds_list_add(brush_points, intersection[3], intersection[4]);
-                    
-                    show_debug_message("Loop " + string(brush_circles_completed) + " detected!");
-                }
-            }
-        }
-    } else {
-        ds_list_add(brush_points, mouse_clamped_x, mouse_clamped_y);
-    }
-}
-
-if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_released(ord("Z")))) {
-    brush_drawing = false;
-    brush_circles_completed = 0;  // ← Reset for next brush session
-    ds_list_clear(brush_points);
 }

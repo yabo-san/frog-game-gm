@@ -1,0 +1,1 @@
+ds_list_destroy(polygon_points);

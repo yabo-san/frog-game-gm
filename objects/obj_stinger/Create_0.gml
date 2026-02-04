@@ -11,3 +11,5 @@ owner = noone;      // assigned when spawned
 
 // Optional: lifetime timer to auto-destroy after some frames
 lifetime = 600;
+
+frozen_speed = 0;  // Store speed before freezing

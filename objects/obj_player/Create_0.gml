@@ -7,4 +7,4 @@ follow_speed = 6; // keeps frog movement smooth
 // Tongue reference (initialized safely in Step)
 tongue = noone;
 
-hp = 20000
+hp = 200000

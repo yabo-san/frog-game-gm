@@ -23,7 +23,7 @@
   ],
   "name":"spr_stinger",
   "nineSlice":null,
-  "origin":4,
+  "origin":5,
   "parent":{
     "name":"Sprites",
     "path":"folders/Sprites.yy",
@@ -77,7 +77,7 @@
     ],
     "visibleRange":null,
     "volume":1.0,
-    "xorigin":8,
+    "xorigin":16,
     "yorigin":8,
   },
   "swatchColours":null,

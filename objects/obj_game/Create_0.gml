@@ -5,13 +5,10 @@ global.pickup_chain = 0;
 global.current_chain = 0;
 
 player = noone;
+brush = noone;
 
 enemy_spawn_timer = 0;
 enemy_spawn_rate = 120;
-
-brush_drawing = false;
-brush_points = ds_list_create();
-brush_circles_completed = 0;
 
 random_set_seed(12345);
 
