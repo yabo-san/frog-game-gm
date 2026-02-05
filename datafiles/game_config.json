@@ -50,6 +50,6 @@
     "combo_ink_bonus": 2
   },
   "debug": {
-    "game_speed_multiplier": 0.75
+    "game_speed_multiplier": 1.0
   }
 }

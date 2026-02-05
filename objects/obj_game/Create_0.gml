@@ -12,7 +12,6 @@ game_set_speed(target_fps * speed_mult, gamespeed_fps);
 global.game_score = 0;
 
 
-global.game_score = 0;
 global.rank = 1;
 global.pickup_chain = 0;
 global.current_chain = 0;
@@ -23,7 +22,8 @@ brush = noone;
 enemy_spawn_timer = 0;
 enemy_spawn_rate = cfg("enemies.spawn_rate");  // was 120
 
-random_set_seed(12345);
+random_seed = 12345;
+random_set_seed(random_seed);
 
 // --- Setup display ---
 var cam = camera_create_view(0, 0, 640, 480);
@@ -42,3 +42,6 @@ mouse_game_y = 240;
 
 // For fullscreen mode
 is_fullscreen = false;
+
+// Create recorder
+recorder = instance_create_layer(0, 0, "Instances", obj_recorder);

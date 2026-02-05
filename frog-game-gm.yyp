@@ -35,6 +35,7 @@
     {"id":{"name":"obj_game","path":"objects/obj_game/obj_game.yy",},},
     {"id":{"name":"obj_pickups","path":"objects/obj_pickups/obj_pickups.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
+    {"id":{"name":"obj_recorder","path":"objects/obj_recorder/obj_recorder.yy",},},
     {"id":{"name":"obj_shield_flash","path":"objects/obj_shield_flash/obj_shield_flash.yy",},},
     {"id":{"name":"obj_slow_zone","path":"objects/obj_slow_zone/obj_slow_zone.yy",},},
     {"id":{"name":"obj_snail","path":"objects/obj_snail/obj_snail.yy",},},
