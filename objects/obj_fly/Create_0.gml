@@ -1,12 +1,11 @@
 event_inherited();
-hp = 1;
-points = 5;
+points = cfg("enemies.fly.points");
 eatable = true;           // always eatable from the start
 sprite_normal = spr_fly;
 sprite_eatable = spr_fly_eatable;
 
 // Movement
-move_speed = 1;
+move_speed = cfg("enemies.fly.move_speed");
 speed_mult = 1;
 
 // Random movement timer

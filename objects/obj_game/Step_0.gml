@@ -47,6 +47,26 @@ if (is_fullscreen) {
 mouse_clamped_x = mouse_game_x;
 mouse_clamped_y = mouse_game_y;
 
+// Scale mouse movement by inverse of game speed to keep it feeling normal
+var speed_compensation = 1.0 / cfg("debug.game_speed_multiplier");
+if (speed_compensation != 1.0) {
+    // Store previous mouse position
+    if (!variable_instance_exists(id, "prev_mouse_x")) {
+        prev_mouse_x = mouse_clamped_x;
+        prev_mouse_y = mouse_clamped_y;
+    }
+    
+    // Calculate mouse delta and scale it
+    var dx = (mouse_clamped_x - prev_mouse_x) * (speed_compensation - 1.0);
+    var dy = (mouse_clamped_y - prev_mouse_y) * (speed_compensation - 1.0);
+    
+    mouse_clamped_x = clamp(mouse_clamped_x + dx, 0, 639);
+    mouse_clamped_y = clamp(mouse_clamped_y + dy, 0, 479);
+    
+    prev_mouse_x = mouse_clamped_x;
+    prev_mouse_y = mouse_clamped_y;
+}
+
 // --- Ensure player exists ---
 if (!instance_exists(player)) {
     player = instance_create_layer(room_width/2, room_height/2, "Instances", obj_player);

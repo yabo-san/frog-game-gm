@@ -60,6 +60,8 @@ if (is_meteor) {
         // Kill enemies on contact
         with (obj_enemy_base) {
             if (point_in_polygon(x, y, other.polygon_points)) {
+                scr_update_score(points);  // Award points + refill ink
+                global.current_chain += 1;  // Add to combo
                 instance_destroy();
             }
         }
@@ -81,7 +83,7 @@ if (is_meteor) {
                     meteor_moving = true;
                     meteor_direction = t.move_direction;
                     t.retracting = true;
-                    meteor_speed = 8;
+                    meteor_speed = cfg("meteor.speed");  // was 8
                     bounces_remaining = max(meteor_enemy_count, 1);
                     show_debug_message("METEOR LAUNCHED! bounces=" + string(bounces_remaining));
                 }

@@ -16,7 +16,9 @@
     {"$GMFolder":"","%Name":"Sprites","folderPath":"folders/Sprites.yy","name":"Sprites","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
   "ForcedPrefabProjectReferences":[],
-  "IncludedFiles":[],
+  "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"game_config.json","CopyToMask":-1,"filePath":"datafiles","name":"game_config.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+  ],
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
@@ -40,6 +42,7 @@
     {"id":{"name":"obj_tongue","path":"objects/obj_tongue/obj_tongue.yy",},},
     {"id":{"name":"rm_level_1","path":"rooms/rm_level_1/rm_level_1.yy",},},
     {"id":{"name":"RoomUI","path":"roomui/RoomUI/RoomUI.yy",},},
+    {"id":{"name":"cfg","path":"scripts/cfg/cfg.yy",},},
     {"id":{"name":"point_distance_to_line","path":"scripts/point_distance_to_line/point_distance_to_line.yy",},},
     {"id":{"name":"scr_damage_enemy","path":"scripts/scr_damage_enemy/scr_damage_enemy.yy",},},
     {"id":{"name":"scr_damage_player","path":"scripts/scr_damage_player/scr_damage_player.yy",},},

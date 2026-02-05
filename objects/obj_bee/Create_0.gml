@@ -1,4 +1,5 @@
 event_inherited();
+points = cfg("enemies.bee.points");
 can_fire = true;       // ready to fire
 fire_cooldown = 120;   // frames between shots
 fire_timer = 0;        // counts down when on cooldown

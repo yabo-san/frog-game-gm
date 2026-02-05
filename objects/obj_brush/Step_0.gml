@@ -47,9 +47,21 @@ for (var i = 0; i < ds_list_size(active_walls); i++) {
 var mx = obj_game.mouse_clamped_x;
 var my = obj_game.mouse_clamped_y;
 
-// Get mouse position from obj_game
-var mx = obj_game.mouse_clamped_x;
-var my = obj_game.mouse_clamped_y;
+// Can't draw without ink
+if (ink_current <= 0) {
+    if (brush_drawing) {
+        brush_drawing = false;
+        brush_circles_completed = 0;
+        ds_list_clear(brush_points);
+    }
+    return;  // Exit early
+}
+
+// Drain ink while drawing
+if (brush_drawing) {
+    ink_current -= ink_drain_rate;
+    ink_current = max(0, ink_current);
+}
 
 // Start drawing
 if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("Z"))) {
@@ -81,7 +93,7 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                     if (instance_exists(player) && point_in_polygon(player.x, player.y, loop)) {
                         var shield = instance_create_layer(0, 0, "Instances", obj_shield_flash);
                         shield.polygon_points = loop;
-                        shield.lifetime = 180;
+                        shield.lifetime = cfg("zones.shield_lifetime");  // was 180
                         
                         with (obj_stinger) {
                             if (point_in_polygon(x, y, loop)) {
@@ -95,15 +107,17 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                         }
                         
                         show_debug_message("SHIELD ACTIVATED!");
+                        ink_current = 0;  // Empty all ink
                     }
                     else {
                         brush_circles_completed += 1;
                         
                         if (brush_circles_completed < 3) {
                             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
+                            ink_current = 0;  // Empty all ink on circle 3
                             zone.polygon_points = loop;
                             zone.is_freeze_zone = false;
-                            zone.lifetime = 120;
+                            zone.lifetime = cfg("zones.slow_lifetime");  // was 120
                             
                             with (obj_enemy_base) {
                                 if (point_in_polygon(x, y, loop)) {
@@ -116,7 +130,7 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
                             zone.polygon_points = loop;
                             zone.is_freeze_zone = true;
-                            zone.lifetime = 300;
+                            zone.lifetime = cfg("zones.freeze_lifetime");  // was 300
                             
                             with (obj_stinger) {
                                 if (point_in_polygon(x, y, loop)) {
@@ -186,19 +200,19 @@ if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_re
                                        brush_points[| i + 2], brush_points[| i + 3]);
         }
         
-        if (direct_dist > 50 && (direct_dist / path_dist) > 0.7) {
+        if (direct_dist > cfg("walls.min_length") && (direct_dist / path_dist) > cfg("walls.straightness_threshold")) {
             var wall = {
                 x1: start_x,
                 y1: start_y,
                 x2: end_x,
                 y2: end_y,
-                lifetime: 120,
+                lifetime: cfg("walls.lifetime"),  // was 120
                 frozen_stingers: ds_list_create()
             };
             
             with (obj_stinger) {
                 var dist = point_distance_to_line(x, y, wall.x1, wall.y1, wall.x2, wall.y2);
-                if (dist < 10) {
+                if (dist < cfg("walls.catch_distance")) {  // was 10
                     frozen_speed = speed;
                     speed = 0;
                     ds_list_add(wall.frozen_stingers, id);

@@ -1,0 +1,55 @@
+{
+  "ink": {
+    "max": 100,
+    "drain_rate": 0.5,
+    "refill_per_kill": 10,
+    "refill_combo_bonus_per_5": 2
+  },
+  "zones": {
+    "slow_lifetime": 120,
+    "freeze_lifetime": 300,
+    "shield_lifetime": 180
+  },
+  "walls": {
+    "lifetime": 120,
+    "catch_distance": 10,
+    "straightness_threshold": 0.7,
+    "min_length": 50
+  },
+  "meteor": {
+    "speed": 8
+  },
+  "enemies": {
+    "spawn_rate": 120,
+    "slow_duration": 180,
+    "vulnerability_duration": 120,
+    "base": {
+      "hp": 1,
+      "points": 10,
+      "move_speed": 1
+    },
+    "fly": {
+      "points": 5,
+      "move_speed": 2
+    },
+    "bee": {
+      "points": 10,
+      "stinger_speed": 5,
+      "stinger_lifetime": 300
+    },
+    "snail": {
+      "points": 3,
+      "move_speed": 0.5
+    }
+  },
+  "player": {
+    "follow_speed": 4
+  },
+  "scoring": {
+    "combo_ink_threshold": 5,
+    "combo_ink_bonus": 2
+  },
+  "debug": {
+    "game_speed_multiplier": 0.75
+  }
+}

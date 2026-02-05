@@ -1,4 +1,17 @@
+// Load config FIRST
+var buffer = buffer_load("game_config.json");
+var json_string = buffer_read(buffer, buffer_text);
+buffer_delete(buffer);
+global.config = json_parse(json_string);
+
+var target_fps = 60;
+var speed_mult = cfg("debug.game_speed_multiplier");
+game_set_speed(target_fps * speed_mult, gamespeed_fps);
+
 // --- Gameplay globals ---
+global.game_score = 0;
+
+
 global.game_score = 0;
 global.rank = 1;
 global.pickup_chain = 0;
@@ -8,7 +21,7 @@ player = noone;
 brush = noone;
 
 enemy_spawn_timer = 0;
-enemy_spawn_rate = 120;
+enemy_spawn_rate = cfg("enemies.spawn_rate");  // was 120
 
 random_set_seed(12345);
 
