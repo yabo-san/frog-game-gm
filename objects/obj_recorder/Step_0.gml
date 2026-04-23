@@ -61,19 +61,30 @@ if (is_replaying && replay_index < ds_list_size(recorded_events)) {
     var event = recorded_events[| replay_index];
     
     if (event.frame == current_frame) {
+        
+            // Override mouse position
+            obj_game.mouse_clamped_x = event.x;
+            obj_game.mouse_clamped_y = event.y;
         // Inject this event into the game
         switch(event.type) {
             case "left_press":
-                // TODO: Trigger tongue spawn
+                // Directly spawn tongue instead of setting held state
+                if (instance_exists(obj_player) && !instance_exists(obj_player.tongue)) {
+                    var t = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_tongue);
+                    global.current_chain = 0;
+                    t.frog = obj_player;
+                    t.target_x = event.x;
+                    t.target_y = event.y;
+                    t.moving = true;
+                    t.retracting = false;
+                    obj_player.tongue = t;
+                }
                 break;
             case "draw_start":
-                // TODO: Start brush drawing
-                break;
-            case "draw_point":
-                // TODO: Add point to brush
+                obj_brush.replay_right_held = true;
                 break;
             case "draw_end":
-                // TODO: End brush drawing
+                obj_brush.replay_right_held = false;
                 break;
         }
         

@@ -1,5 +1,36 @@
-// Draw custom crosshair
-draw_set_color(c_yellow);
-draw_line(mouse_clamped_x - 5, mouse_clamped_y, mouse_clamped_x + 5, mouse_clamped_y);
-draw_line(mouse_clamped_x, mouse_clamped_y - 5, mouse_clamped_x, mouse_clamped_y + 5);
+// --- Ground plane pebbles (at z=0) ---
+for (var i = 0; i < pebble_count; i++) {
+    circle_3d(pebble_x[i], pebble_y[i], 0, pebble_r[i], make_color_rgb(170, 140, 100));
+}
+
+// --- Foliage border (elevated slightly, z=5) ---
+var dark_green = make_color_rgb(30, 80, 30);
+var mid_green = make_color_rgb(50, 120, 50);
+
+// Border bumps
+for (var i = 0; i < array_length(foliage_bumps); i++) {
+    circle_3d(foliage_bumps[i].fx, foliage_bumps[i].fy, 5, foliage_bumps[i].fr, mid_green);
+}
+
+// Corner clusters (slightly higher)
+for (var i = 0; i < array_length(foliage_corners); i++) {
+    circle_3d(foliage_corners[i].fx, foliage_corners[i].fy, 8, foliage_corners[i].fr, dark_green);
+}
+
+// --- Crosshair ---
+var cx, cy;
+if (global.view_mode != "2d") {
+    // Draw at screen mouse position directly (sp_to_wp handles the world mapping)
+    var _scale = window_get_width() / 640;
+    cx = window_mouse_get_x() / _scale;
+    cy = window_mouse_get_y() / _scale;
+} else {
+    cx = mouse_clamped_x;
+    cy = mouse_clamped_y;
+}
+draw_set_color(c_purple);
+draw_circle(cx, cy, 8, true);
+draw_line(cx - 5, cy, cx + 5, cy);
+draw_line(cx, cy - 5, cx, cy + 5);
+draw_circle(cx, cy, 1, false);
 draw_set_color(c_white);

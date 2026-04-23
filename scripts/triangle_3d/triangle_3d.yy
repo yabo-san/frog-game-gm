@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"triangle_3d",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"triangle_3d",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

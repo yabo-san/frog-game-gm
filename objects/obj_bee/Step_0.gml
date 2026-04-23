@@ -19,7 +19,8 @@ if (!can_fire) {
 }
 
 // --- Fire logic ---
-if (can_fire && instance_exists(obj_player) && active_stingers < max_active_stingers) {
+if (can_fire && instance_exists(obj_player) && active_stingers < max_active_stingers
+    && x > 0 && x < room_width && y > 0 && y < room_height) {
     var s = instance_create_layer(x, y, "Instances", obj_stinger);
     // s.speed = 5;
     s.direction = point_direction(x, y, obj_player.x, obj_player.y);

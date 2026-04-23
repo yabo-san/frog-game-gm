@@ -27,3 +27,10 @@ else speed_mult = 0;  // Level 3+ = frozen
 
 // Sprite swap for eatable state
 scr_update_eatable(id);
+
+// Depth sorting for fake 3D (fixed camera = Y-sort works)
+if (global.view_mode != "2d") {
+    depth = -y;
+} else {
+    depth = 0;
+}

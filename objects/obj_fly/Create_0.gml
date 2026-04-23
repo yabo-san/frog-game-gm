@@ -1,8 +1,10 @@
 event_inherited();
 points = cfg("enemies.fly.points");
 eatable = true;           // always eatable from the start
-sprite_normal = spr_fly;
-sprite_eatable = spr_fly_eatable;
+sprite_index = global.spr_fly_mask;
+mask_index = global.spr_fly_mask;
+sprite_normal = global.spr_fly_mask;
+sprite_eatable = global.spr_fly_mask;
 
 // Movement
 move_speed = cfg("enemies.fly.move_speed");

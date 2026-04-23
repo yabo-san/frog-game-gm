@@ -1,3 +1,6 @@
+// Generate placeholder sprites before anything else
+scr_generate_sprites();
+
 // Load config FIRST
 var buffer = buffer_load("game_config.json");
 var json_string = buffer_read(buffer, buffer_text);
@@ -22,6 +25,9 @@ brush = noone;
 enemy_spawn_timer = 0;
 enemy_spawn_rate = cfg("enemies.spawn_rate");  // was 120
 
+// Spider tracking — max 2, alternating axis
+last_spider_axis = "horizontal";  // next one will be vertical
+
 random_seed = 12345;
 random_set_seed(random_seed);
 
@@ -43,5 +49,97 @@ mouse_game_y = 240;
 // For fullscreen mode
 is_fullscreen = false;
 
+// --- View mode: "2d" or "3d", toggle with V ---
+global.view_mode = "2d";
+
+// --- Fake 3D globals ---
+globalvar res_screen_x, res_screen_y, res_screen_z, res_screen_scale, res_world_x, res_world_y;
+res_screen_x = 0;
+res_screen_y = 0;
+res_screen_z = 0;
+res_screen_scale = 1;
+res_world_x = 0;
+res_world_y = 0;
+
+// --- Fake 3D camera (sokpop style) ---
+// Depth forcing set on V toggle, not here (layer may not exist yet)
+
+global.cam = {
+    cam_x: 0,
+    cam_y: 0,
+    cam_z: 300,
+    cam_rotation: 0,
+    cam_pitch: -25,
+    cam_width: 640,
+    cam_height: 480,
+    cam_zoom: 0.5,
+    cam_fov: 0.35,
+    cam_near: 0,
+    cam_far: 400,
+    farnear_comp: 1 / 400,
+    m00: 0, m10: 0, m01: 0, m11: 0,
+    cam_yscale: 1, cam_zscale: 0
+};
+
+// Pre-compute camera matrices
+var _c = global.cam;
+_c.m00 = lengthdir_x(1, _c.cam_rotation);
+_c.m10 = lengthdir_y(-1, _c.cam_rotation);
+_c.m01 = lengthdir_y(1, _c.cam_rotation);
+_c.m11 = lengthdir_x(1, _c.cam_rotation);
+_c.cam_yscale = lengthdir_y(1, _c.cam_pitch);
+_c.cam_zscale = lengthdir_x(1, _c.cam_pitch);
+
 // Create recorder
-recorder = instance_create_layer(0, 0, "Instances", obj_recorder);
+//recorder = instance_create_layer(0, 0, "Instances", obj_recorder);
+
+// Pre-generate background details (pebbles + foliage bumps)
+// Save and restore RNG seed so background doesn't eat gameplay randomness
+var _save_seed = random_get_seed();
+random_set_seed(99999);
+
+pebble_count = 40;
+pebble_x = array_create(pebble_count);
+pebble_y = array_create(pebble_count);
+pebble_r = array_create(pebble_count);
+for (var i = 0; i < pebble_count; i++) {
+    pebble_x[i] = irandom_range(20, room_width - 20);
+    pebble_y[i] = irandom_range(20, room_height - 20);
+    pebble_r[i] = irandom_range(2, 5);
+}
+
+// Foliage border bumps
+var border = 18;
+var bump_step = 20;
+foliage_bumps = [];
+// Top
+for (var bx = 0; bx < room_width; bx += bump_step) {
+    array_push(foliage_bumps, { fx: bx + irandom(6), fy: border + irandom(4), fr: irandom_range(6, 12) });
+}
+// Bottom
+for (var bx = 0; bx < room_width; bx += bump_step) {
+    array_push(foliage_bumps, { fx: bx + irandom(6), fy: room_height - border - irandom(4), fr: irandom_range(6, 12) });
+}
+// Left
+for (var by = 0; by < room_height; by += bump_step) {
+    array_push(foliage_bumps, { fx: border + irandom(4), fy: by + irandom(6), fr: irandom_range(6, 12) });
+}
+// Right
+for (var by = 0; by < room_height; by += bump_step) {
+    array_push(foliage_bumps, { fx: room_width - border - irandom(4), fy: by + irandom(6), fr: irandom_range(6, 12) });
+}
+
+// Corner clusters
+foliage_corners = [];
+var corner_pts = [[0, 0], [room_width, 0], [0, room_height], [room_width, room_height]];
+for (var c = 0; c < 4; c++) {
+    for (var j = 0; j < 5; j++) {
+        array_push(foliage_corners, {
+            fx: corner_pts[c][0] + irandom_range(-20, 20),
+            fy: corner_pts[c][1] + irandom_range(-20, 20),
+            fr: irandom_range(10, 20)
+        });
+    }
+}
+
+random_set_seed(_save_seed);

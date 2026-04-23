@@ -64,14 +64,14 @@ if (brush_drawing) {
 }
 
 // Start drawing
-if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("Z"))) {
+if (is_draw_pressed()) {
     brush_drawing = true;
     ds_list_clear(brush_points);
     ds_list_add(brush_points, mx, my);
 }
 
 // Continue drawing
-if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z")))) {
+if (brush_drawing && is_draw_held()) {
     var last_index = ds_list_size(brush_points) - 2;
     
     if (last_index >= 0) {
@@ -93,7 +93,7 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                     if (instance_exists(player) && point_in_polygon(player.x, player.y, loop)) {
                         var shield = instance_create_layer(0, 0, "Instances", obj_shield_flash);
                         shield.polygon_points = loop;
-                        shield.lifetime = cfg("zones.shield_lifetime");  // was 180
+                        shield.lifetime = cfg("zones.shield_lifetime");
                         
                         with (obj_stinger) {
                             if (point_in_polygon(x, y, loop)) {
@@ -114,10 +114,9 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                         
                         if (brush_circles_completed < 3) {
                             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
-                            ink_current = 0;  // Empty all ink on circle 3
                             zone.polygon_points = loop;
                             zone.is_freeze_zone = false;
-                            zone.lifetime = cfg("zones.slow_lifetime");  // was 120
+                            zone.lifetime = cfg("zones.slow_lifetime");
                             
                             with (obj_enemy_base) {
                                 if (point_in_polygon(x, y, loop)) {
@@ -130,7 +129,8 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
                             var zone = instance_create_layer(0, 0, "Instances", obj_slow_zone);
                             zone.polygon_points = loop;
                             zone.is_freeze_zone = true;
-                            zone.lifetime = cfg("zones.freeze_lifetime");  // was 300
+                            zone.lifetime = cfg("zones.freeze_lifetime");
+                            ink_current = 0;  // Empty all ink on circle 3
                             
                             with (obj_stinger) {
                                 if (point_in_polygon(x, y, loop)) {
@@ -183,7 +183,7 @@ if (brush_drawing && (mouse_check_button(mb_right) || keyboard_check(ord("Z"))))
 }
 
 // Stop drawing - check for walls
-if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_released(ord("Z")))) {
+if (brush_drawing && is_draw_released()) {
     var num_points = ds_list_size(brush_points) / 2;
     
     if (num_points >= 5) {
@@ -206,13 +206,13 @@ if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_re
                 y1: start_y,
                 x2: end_x,
                 y2: end_y,
-                lifetime: cfg("walls.lifetime"),  // was 120
+                lifetime: cfg("walls.lifetime"),
                 frozen_stingers: ds_list_create()
             };
             
             with (obj_stinger) {
                 var dist = point_distance_to_line(x, y, wall.x1, wall.y1, wall.x2, wall.y2);
-                if (dist < cfg("walls.catch_distance")) {  // was 10
+                if (dist < cfg("walls.catch_distance")) {
                     frozen_speed = speed;
                     speed = 0;
                     ds_list_add(wall.frozen_stingers, id);
@@ -228,3 +228,7 @@ if (brush_drawing && (mouse_check_button_released(mb_right) || keyboard_check_re
     brush_circles_completed = 0;
     ds_list_clear(brush_points);
 }
+
+// Update previous states for press detection
+replay_left_prev = replay_left_held;
+replay_right_prev = replay_right_held;

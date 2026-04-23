@@ -1,7 +1,6 @@
-draw_set_color(c_white);
-draw_text(10, 10, "Score: " + string(global.game_score));
-draw_text(10, 30, "Rank: " + string(global.rank));
-draw_text(10, 50, "Combo: " + string(global.current_chain));
+// Score (green, bold — matches Ribbit Rampage)
+draw_set_color(c_lime);
+draw_text(10, 10, string(global.game_score));
 
 // Draw ink bar
 if (instance_exists(brush)) {

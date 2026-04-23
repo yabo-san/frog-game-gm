@@ -7,8 +7,10 @@ max_active_stingers = 1; // max stingers allowed at once
 eatable = true
 reaction_parried = "immune"; // cannot be affected by stingers
 
-sprite_normal = spr_bee;
-sprite_eatable = spr_bee_eatable;
+sprite_index = global.spr_bee_mask;
+mask_index = global.spr_bee_mask;
+sprite_normal = global.spr_bee_mask;
+sprite_eatable = global.spr_bee_mask;
 
 //copy from fly for movement:
 // Random movement timer

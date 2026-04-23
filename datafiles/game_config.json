@@ -40,6 +40,59 @@
     "snail": {
       "points": 3,
       "move_speed": 0.5
+    },
+    "beetle": {
+      "points": 7,
+      "radius": 14,
+      "turn_speed": 1.5,
+      "aim_time": 120,
+      "charge_speed": 5,
+      "charge_duration": 60
+    },
+    "butterfly": {
+      "hp": 2,
+      "points": 15,
+      "move_speed": 2.5
+    },
+    "spider": {
+      "points": 8,
+      "move_speed": 1
+    },
+    "caterpillar": {
+      "points": 20,
+      "move_speed": 1.5,
+      "num_segments": 9,
+      "seg_radius": 8,
+      "seg_spacing": 8,
+      "orbit_speed": 1.2,
+      "approach_speed": 0.05,
+      "orbit_radius": 120
+    },
+    "earthworm": {
+      "points": 50,
+      "move_speed": 3,
+      "lifetime": 300
+    },
+    "heavy_bee": {
+      "hp": 3,
+      "points": 25,
+      "move_speed": 0.8,
+      "body_radius": 22,
+      "fire_cooldown": 80,
+      "max_stingers": 4,
+      "stinger_speed": 2
+    },
+    "scorpion": {
+      "points": 12,
+      "move_speed": 1.8,
+      "body_radius": 16,
+      "orbit_speed": 1.0,
+      "orbit_radius": 100,
+      "tail_length": 30,
+      "lunge_cooldown": 150,
+      "lunge_speed": 0.06,
+      "lunge_duration": 40,
+      "stun_duration": 180
     }
   },
   "player": {

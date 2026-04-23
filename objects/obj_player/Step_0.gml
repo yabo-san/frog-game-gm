@@ -44,3 +44,10 @@ if (enemy != noone && !enemy.eatable) {
     // instance_destroy(enemy);
 }
 // show_debug_message(hp)
+
+// Depth sorting for fake 3D (fixed camera = Y-sort works)
+if (global.view_mode != "2d") {
+    depth = -y;
+} else {
+    depth = 0;
+}

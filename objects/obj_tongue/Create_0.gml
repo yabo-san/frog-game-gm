@@ -1,3 +1,6 @@
+sprite_index = global.spr_tongue_mask;
+mask_index = global.spr_tongue_mask;
+
 // --- Movement ---
 moving = false;          // true when tongue is in motion
 tongue_speed = 8;        // movement speed

@@ -1,6 +1,5 @@
-//sprite_body = s_body; // placeholder
-//sprite_eyes = s_eyes;
-//sprite_limbs = s_limbs;
+sprite_index = global.spr_player_mask;
+mask_index = global.spr_player_mask;
 
 follow_speed = cfg("player.follow_speed");  // was 6
 
