@@ -1,28 +1,22 @@
-/// @func scr_damage_player(amount, [source])
-/// @desc Damages the player and handles death
-/// @param amount  Amount of damage to deal
-/// @param source  (Optional) What damaged the player
-function scr_damage_player(amount, source = noone) {
+/// @func scr_damage_player(lives_cost, [source])
+/// @desc Deducts lives from the player, handles invulnerability and game over
+/// @param lives_cost  Number of lives to lose
+/// @param source      (Optional) What damaged the player
+function scr_damage_player(lives_cost, source = noone) {
     if (!instance_exists(obj_player)) return false;
-    
-    // Apply damage
-    obj_player.hp -= amount;
-    
-    // Visual/audio feedback (optional)
-    // screen_shake(5, 10);
-    // audio_play_sound(snd_player_hurt, 1, false);
-    
-    // Check for death
-    if (obj_player.hp <= 0) {
-        obj_player.hp = 0;
+    if (obj_player.invuln_timer > 0) return false;
+
+    global.lives -= lives_cost;
+
+    if (global.lives <= 0) {
+        global.lives = 0;
         instance_destroy(obj_player);
-        
-        // Game over logic
-        room_restart();  // ← Uncomment this to restart on death
-        // room_goto(rm_game_over);
-        
-        return true;  // Player died
+        room_restart();
+        return true;
     }
-    
-    return false;  // Player survived
+
+    // Respawn: grant invulnerability, reset chain
+    obj_player.invuln_timer = obj_player.invuln_duration;
+    global.current_chain = 0;
+    return true;
 }

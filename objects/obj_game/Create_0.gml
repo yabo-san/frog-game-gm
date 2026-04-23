@@ -16,6 +16,7 @@ global.game_score = 0;
 
 
 global.rank = 1;
+global.lives = cfg("player.lives");
 global.pickup_chain = 0;
 global.current_chain = 0;
 
@@ -38,16 +39,35 @@ camera_set_view_pos(cam, 0, 0);
 view_camera[0] = cam;
 
 surface_resize(application_surface, 640, 480);
-window_set_size(640 * 2, 480 * 2);
+application_surface_draw_enable(false);
 gpu_set_tex_filter(false);
 window_set_cursor(cr_none);
+
+// Size window to fill vertical space with side panels for UI
+is_fullscreen = false;
+var _dw = display_get_width();
+var _dh = display_get_height();
+// Reserve ~8% for system chrome (menu bar, taskbar, title bar, dock)
+var _avail_h = floor(_dh * 0.92);
+var _scale = _avail_h / 480;
+var _win_h = floor(480 * _scale);
+var _win_w = floor(_dw * 0.96);
+window_set_size(_win_w, _win_h);
+window_center();
+
+// Play area layout (recalculated each step)
+play_area_x = 0;
+play_area_y = 0;
+play_area_w = 640;
+play_area_h = 480;
+play_area_scale = 1;
+panel_width = 0;
 
 // Virtual mouse starts at center
 mouse_game_x = 320;
 mouse_game_y = 240;
-
-// For fullscreen mode
-is_fullscreen = false;
+mouse_screen_x = 320;
+mouse_screen_y = 240;
 
 // --- View mode: "2d" or "3d", toggle with V ---
 global.view_mode = "2d";

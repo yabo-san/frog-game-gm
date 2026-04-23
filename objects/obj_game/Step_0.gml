@@ -41,67 +41,52 @@ if (global.view_mode == "fp" && instance_exists(player)) {
 }
 */
 
+// --- Recalculate play area layout ---
+var dw = window_get_width();
+var dh = window_get_height();
+play_area_scale = dh / 480;
+play_area_w = floor(640 * play_area_scale);
+play_area_h = dh;
+play_area_x = floor((dw - play_area_w) / 2);
+play_area_y = 0;
+panel_width = play_area_x;
+
+// Set GUI to match window so Draw_64 coordinates = window pixel coordinates
+display_set_gui_size(dw, dh);
+
 // --- Fullscreen toggle ---
 if (keyboard_check_pressed(ord("F")) && !is_fullscreen) {
-    // Store current game mouse position
-    var preserve_x = mouse_game_x;
-    var preserve_y = mouse_game_y;
-    
     window_set_fullscreen(true);
     is_fullscreen = true;
-    
-    // Restore game mouse position
-    mouse_game_x = preserve_x;
-    mouse_game_y = preserve_y;
 }
-
 if (keyboard_check_pressed(ord("W")) && is_fullscreen) {
     window_set_fullscreen(false);
     is_fullscreen = false;
+    window_set_size(640 * 2, 480 * 2);
 }
 
-if (keyboard_check_pressed(vk_space)) {
-    show_debug_message("BEFORE mouse handling: " + string(mouse_game_x) + ", " + string(mouse_game_y));
+// --- Mouse handling: absolute mapping to centered play area ---
+var mx = window_mouse_get_x();
+var my = window_mouse_get_y();
+
+// Map screen position to game surface coords (640x480)
+mouse_screen_x = clamp((mx - play_area_x) / play_area_scale, 0, 639);
+mouse_screen_y = clamp((my - play_area_y) / play_area_scale, 0, 479);
+
+// Lock OS cursor within the play area bounds on screen
+var lock_x = clamp(mx, play_area_x, play_area_x + play_area_w - 1);
+var lock_y = clamp(my, play_area_y, play_area_y + play_area_h - 1);
+if (mx != lock_x || my != lock_y) {
+    window_mouse_set(lock_x, lock_y);
 }
 
-// --- Mouse handling ---
-if (is_fullscreen) {
-    var center_x = window_get_width() / 2;
-    var center_y = window_get_height() / 2;
-    
-    var mx = window_mouse_get_x();
-    var my = window_mouse_get_y();
-    
-    var dx = mx - center_x;
-    var dy = my - center_y;
-    
-    mouse_game_x = clamp(mouse_game_x + dx * 0.5, 0, 639);
-    mouse_game_y = clamp(mouse_game_y + dy * 0.5, 0, 479);
-    
-    window_mouse_set(center_x, center_y);
-} else {
-    var mx = window_mouse_get_x();
-    var my = window_mouse_get_y();
-    var scale = window_get_width() / 640;
-    
-    mouse_game_x = mx / scale;
-    mouse_game_y = my / scale;
-    
-    if (mouse_game_x < 0 || mouse_game_x > 639 || mouse_game_y < 0 || mouse_game_y > 479) {
-        mouse_game_x = clamp(mouse_game_x, 0, 639);
-        mouse_game_y = clamp(mouse_game_y, 0, 479);
-        window_mouse_set(mouse_game_x * scale, mouse_game_y * scale);
-    }
-}
+// In 2D, game coords = screen coords
+mouse_game_x = mouse_screen_x;
+mouse_game_y = mouse_screen_y;
 
 // In 3D mode, convert screen mouse to world coords
 if (global.view_mode != "2d") {
-    var mx = window_mouse_get_x();
-    var my = window_mouse_get_y();
-    var scale = window_get_width() / 640;
-    var screen_mx = mx / scale;
-    var screen_my = my / scale;
-    sp_to_wp(screen_mx, screen_my);
+    sp_to_wp(mouse_screen_x, mouse_screen_y);
     mouse_game_x = clamp(res_world_x, 0, 639);
     mouse_game_y = clamp(res_world_y, 0, 479);
 }
@@ -166,6 +151,16 @@ if (enemy_spawn_timer <= 0) {
 
     var enemy_type = choose(obj_bee, obj_fly, obj_snail, obj_beetle, obj_butterfly, obj_spider, obj_caterpillar, obj_scorpion, obj_heavy_bee);
 
+    // Snail: cap based on rank (max_per_rank array, capped at 4)
+    if (enemy_type == obj_snail) {
+        var _rank_table = enemy_cfg("snail", "max_per_rank");
+        var _rank_idx = clamp(global.rank - 1, 0, array_length(_rank_table) - 1);
+        var _max_snails = _rank_table[_rank_idx];
+        if (instance_number(obj_snail) >= _max_snails) {
+            enemy_type = choose(obj_bee, obj_fly, obj_beetle, obj_butterfly);
+        }
+    }
+
     // Spider: max 2, alternating axis, spawn inside room (not off-edge)
     if (enemy_type == obj_spider) {
         if (instance_number(obj_spider) >= 2) {
@@ -202,13 +197,28 @@ if (enemy_spawn_timer <= 0) {
         }
     }
 
-    var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
-
-    if (instance_exists(player)) {
-        e.target_x = player.x;
-        e.target_y = player.y;
+    // Flies spawn in seesaw pairs
+    if (enemy_type == obj_fly) {
+        var shared_axis = irandom(359);
+        for (var fi = 0; fi < 2; fi++) {
+            var f = instance_create_layer(spawn_x, spawn_y, "Instances", obj_fly);
+            f.osc_axis = shared_axis;
+            f.osc_phase = fi * 180;  // opposite phase = seesaw
+            f.base_x = spawn_x;
+            f.base_y = spawn_y;
+            if (instance_exists(player)) {
+                f.target_x = player.x;
+                f.target_y = player.y;
+            }
+        }
     } else {
-        e.target_x = room_width/2;
-        e.target_y = room_height/2;
+        var e = instance_create_layer(spawn_x, spawn_y, "Instances", enemy_type);
+        if (instance_exists(player)) {
+            e.target_x = player.x;
+            e.target_y = player.y;
+        } else {
+            e.target_x = room_width/2;
+            e.target_y = room_height/2;
+        }
     }
 }

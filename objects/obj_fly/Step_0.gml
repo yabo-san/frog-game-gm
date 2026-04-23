@@ -1,31 +1,24 @@
 event_inherited();
-// Countdown timers
-if (move_timer > 0) {
-    // Move in current random direction
-    x += lengthdir_x(move_speed * speed_mult, move_direction);
-    y += lengthdir_y(move_speed * speed_mult, move_direction);
 
-    move_timer -= 1;
+// Seesaw: oscillate along shared axis, phase determines direction
+osc_timer += osc_speed * speed_mult;
 
-    // Optional: stop if hitting room edges
-    if (x < 0) x = 0;
-    if (x > room_width) x = room_width;
-    if (y < 0) y = 0;
-    if (y > room_height) y = room_height;
-
-    // When timer ends, start stop phase
-    if (move_timer <= 0) {
-        stop_timer = irandom_range(30, 90);   // frames to pause
-    }
-
-} else if (stop_timer > 0) {
-    stop_timer -= 1;
-
-    // When stop timer ends, pick new random direction and move
-    if (stop_timer <= 0) {
-        move_direction = irandom(359);          // new random heading
-        move_timer = irandom_range(60, 120);    // frames to move
-    }
+// Drift anchor toward player
+if (instance_exists(obj_player)) {
+    var dir_to_player = point_direction(base_x, base_y, obj_player.x, obj_player.y);
+    base_x += lengthdir_x(drift_speed * speed_mult, dir_to_player);
+    base_y += lengthdir_y(drift_speed * speed_mult, dir_to_player);
 }
-// show_debug_message("Fly speed_mult: " + string(speed_mult) + " | move_speed: " + string(move_speed));
 
+// Keep anchor in bounds
+var margin = 40;
+base_x = clamp(base_x, margin, room_width - margin);
+base_y = clamp(base_y, margin, room_height - margin);
+
+// Oscillate — phase offset creates the seesaw (one goes left while other goes right)
+var offset = sin(degtorad(osc_timer + osc_phase)) * osc_amplitude;
+x = base_x + lengthdir_x(offset, osc_axis);
+y = base_y + lengthdir_y(offset, osc_axis);
+
+x = clamp(x, 8, room_width - 8);
+y = clamp(y, 8, room_height - 8);

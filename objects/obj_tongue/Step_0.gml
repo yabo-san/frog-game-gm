@@ -35,8 +35,12 @@ if (moving) {
         if (enemy != noone) {
             if (enemy.eatable) {
                 // Pass through eatable enemies
+            } else if (enemy.object_index == obj_snail) {
+                // Snail handles its own tongue collision (knockback)
+                retracting = true;
             } else {
-                // Hit non-eatable enemy - BOUNCE/RETRACT
+                // Hit non-eatable enemy — deal damage, then retract
+                scr_damage_enemy(enemy, 1);
                 retracting = true;
             }
         }

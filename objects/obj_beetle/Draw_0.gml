@@ -24,6 +24,3 @@ if (!armor_broken) {
     line_3d(x, y, gz + 2, mr_x, mr_y, gz, 2, make_color_rgb(80, 40, 20));
 }
 
-// Debug
-draw_set_color(c_yellow);
-draw_text(x, y + r + 4, state);

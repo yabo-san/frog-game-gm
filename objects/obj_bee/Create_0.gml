@@ -1,11 +1,11 @@
 event_inherited();
-points = cfg("enemies.bee.points");
-can_fire = true;       // ready to fire
-fire_cooldown = 120;   // frames between shots
-fire_timer = 0;        // counts down when on cooldown
-max_active_stingers = 1; // max stingers allowed at once
-eatable = true
-reaction_parried = "immune"; // cannot be affected by stingers
+points = enemy_cfg("bee", "points");
+eatable = enemy_cfg("bee", "eatable");
+reaction_parried = enemy_cfg("bee", "reaction_parried");
+can_fire = true;
+fire_cooldown = enemy_cfg("bee", "fire_cooldown");
+fire_timer = 0;
+max_active_stingers = enemy_cfg("bee", "max_active_stingers");
 
 sprite_index = global.spr_bee_mask;
 mask_index = global.spr_bee_mask;

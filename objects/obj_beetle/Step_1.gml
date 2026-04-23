@@ -53,8 +53,10 @@ if (instance_exists(obj_player)) {
             instance_destroy();
             exit;
         } else {
-            // Front hit — damage player
-            scr_damage_player(1, id);
+            // Front hit — damage player, beetle destroyed
+            scr_damage_player(contact_damage, id);
+            instance_destroy();
+            exit;
         }
     }
 }

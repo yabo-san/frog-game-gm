@@ -1,18 +1,21 @@
 event_inherited();
-points = cfg("enemies.fly.points");
-eatable = true;           // always eatable from the start
+points = enemy_cfg("fly", "points");
+eatable = enemy_cfg("fly", "eatable");
 sprite_index = global.spr_fly_mask;
 mask_index = global.spr_fly_mask;
 sprite_normal = global.spr_fly_mask;
 sprite_eatable = global.spr_fly_mask;
 
 // Movement
-move_speed = cfg("enemies.fly.move_speed");
+move_speed = enemy_cfg("fly", "move_speed");
 speed_mult = 1;
 
-// Random movement timer
-move_timer = irandom_range(60, 120);  // frames to move in current direction
-stop_timer = 0;                       // frames to pause after moving
-
-// Random direction in degrees (0–359)
-move_direction = irandom(359);
+// Seesaw oscillation — paired flies share axis but opposite phase
+osc_timer = 0;
+osc_phase = 0;              // 0 or 180 — set by spawner for pairing
+osc_axis = irandom(359);    // axis to seesaw along — set by spawner for pairing
+osc_amplitude = 70;
+osc_speed = 2.5;
+drift_speed = 0.3;
+base_x = x;
+base_y = y;

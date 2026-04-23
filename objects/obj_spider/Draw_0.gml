@@ -2,7 +2,7 @@
 var r = 20;
 var gz = r;
 var body_col = eatable ? c_lime : make_color_rgb(50, 30, 20);
-var leg_col = eatable ? c_lime : c_black;
+var leg_col = eatable ? c_lime : make_color_rgb(40, 25, 15);
 
 // Shadow
 circle_3d(x, y, 0, r - 4, c_gray);

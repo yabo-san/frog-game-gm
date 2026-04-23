@@ -75,10 +75,10 @@ if (instance_exists(obj_player)) {
                 instance_destroy();
                 exit;
             } else {
-                // Kill the player
-                scr_damage_player(1, id);
+                scr_damage_player(contact_damage, id);
+                instance_destroy();
+                exit;
             }
-            break;
         }
     }
 }

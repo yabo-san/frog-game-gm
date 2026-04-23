@@ -38,7 +38,8 @@ for (var di = 0; di < num_segments; di++) {
     } else if (zone_painted[zone]) {
         col = c_purple;
     } else {
-        col = (i == 0) ? c_yellow : c_orange;
+        // Teal/green body, slightly lighter head
+        col = (i == 0) ? make_color_rgb(80, 190, 160) : make_color_rgb(50, 160, 130);
     }
 
     // Shadow

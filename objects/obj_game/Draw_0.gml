@@ -17,17 +17,9 @@ for (var i = 0; i < array_length(foliage_corners); i++) {
     circle_3d(foliage_corners[i].fx, foliage_corners[i].fy, 8, foliage_corners[i].fr, dark_green);
 }
 
-// --- Crosshair ---
-var cx, cy;
-if (global.view_mode != "2d") {
-    // Draw at screen mouse position directly (sp_to_wp handles the world mapping)
-    var _scale = window_get_width() / 640;
-    cx = window_mouse_get_x() / _scale;
-    cy = window_mouse_get_y() / _scale;
-} else {
-    cx = mouse_clamped_x;
-    cy = mouse_clamped_y;
-}
+// --- Crosshair (drawn at screen-space mouse position on the 640x480 surface) ---
+var cx = mouse_screen_x;
+var cy = mouse_screen_y;
 draw_set_color(c_purple);
 draw_circle(cx, cy, 8, true);
 draw_line(cx - 5, cy, cx + 5, cy);

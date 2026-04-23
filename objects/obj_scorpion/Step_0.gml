@@ -68,10 +68,11 @@ if (state == "stunned") {
     }
 }
 
-// Calculate stinger tip position
-// Tail arcs up and over the body, tip extends toward facing direction during lunge
-var tail_base_angle = facing_angle + 180;  // tail starts behind body
-var tip_angle = lerp(tail_base_angle, facing_angle, lunge_extend);
-var tip_dist = tail_length * (0.5 + 0.5 * lunge_extend);
+// Stinger tip position
+// At rest: tucked behind the body
+// During lunge: extends straight toward player at full range
+var rest_angle = facing_angle + 180;  // behind body
+var tip_angle = lerp(rest_angle, facing_angle, lunge_extend);
+var tip_dist = lerp(body_radius * 0.8, tail_length, lunge_extend);
 stinger_tip_x = x + lengthdir_x(tip_dist, tip_angle);
 stinger_tip_y = y + lengthdir_y(tip_dist, tip_angle);

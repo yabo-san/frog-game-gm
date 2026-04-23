@@ -4,7 +4,8 @@
 if (state == "lunge" && instance_exists(obj_tongue)) {
     var t = obj_tongue;
     if (t.moving && !t.retracting) {
-        if (point_distance(t.x, t.y, stinger_tip_x, stinger_tip_y) < 10) {
+        var _stinger_r = enemy_cfg("scorpion", "stinger_radius");
+        if (point_distance(t.x, t.y, stinger_tip_x, stinger_tip_y) < _stinger_r + 4) {
             // Tongue hit the stinger — stun the scorpion
             state = "stunned";
             stun_timer = stun_duration;
@@ -36,12 +37,17 @@ if (instance_exists(obj_player)) {
             instance_destroy();
             exit;
         } else {
-            scr_damage_player(1, id);
+            scr_damage_player(contact_damage, id);
+            instance_destroy();
+            exit;
         }
     }
 
     // Stinger tip contact (lethal during lunge, not during stun)
-    if (state == "lunge" && point_distance(p.x, p.y, stinger_tip_x, stinger_tip_y) < 8) {
-        scr_damage_player(1, id);
+    var _sr = enemy_cfg("scorpion", "stinger_radius");
+    if (state == "lunge" && point_distance(p.x, p.y, stinger_tip_x, stinger_tip_y) < _sr) {
+        scr_damage_player(contact_damage, id);
+        instance_destroy();
+        exit;
     }
 }

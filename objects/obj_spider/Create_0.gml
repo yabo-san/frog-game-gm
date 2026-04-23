@@ -1,9 +1,9 @@
 event_inherited();
 
-points = cfg("enemies.spider.points");
-eatable = true;
-move_speed = cfg("enemies.spider.move_speed");
-reaction_parried = "damage";
+points = enemy_cfg("spider", "points");
+eatable = enemy_cfg("spider", "eatable");
+move_speed = enemy_cfg("spider", "move_speed");
+reaction_parried = enemy_cfg("spider", "reaction_parried");
 
 sprite_normal = global.spr_spider;
 sprite_eatable = global.spr_spider;

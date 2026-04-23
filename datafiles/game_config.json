@@ -26,20 +26,31 @@
     "base": {
       "hp": 1,
       "points": 10,
-      "move_speed": 1
+      "move_speed": 1,
+      "eatable": false,
+      "reaction_parried": "damage",
+      "contact_damage": 1
     },
     "fly": {
       "points": 5,
-      "move_speed": 2
+      "move_speed": 2,
+      "eatable": true
     },
     "bee": {
       "points": 10,
-      "stinger_speed": 5,
-      "stinger_lifetime": 300
+      "eatable": true,
+      "reaction_parried": "immune",
+      "fire_cooldown": 120,
+      "max_active_stingers": 1
     },
     "snail": {
       "points": 3,
-      "move_speed": 0.5
+      "move_speed": 0.5,
+      "reaction_parried": "damage",
+      "contact_damage": 999,
+      "max_per_rank": [1, 1, 2, 2, 3, 3, 4],
+      "shell_duration": 90,
+      "knockback_force": 6
     },
     "beetle": {
       "points": 7,
@@ -52,15 +63,18 @@
     "butterfly": {
       "hp": 2,
       "points": 15,
-      "move_speed": 2.5
+      "move_speed": 3.5
     },
     "spider": {
       "points": 8,
-      "move_speed": 1
+      "move_speed": 1,
+      "eatable": true
     },
     "caterpillar": {
       "points": 20,
       "move_speed": 1.5,
+      "reaction_parried": "immune",
+      "zones_required": 3,
       "num_segments": 9,
       "seg_radius": 8,
       "seg_spacing": 8,
@@ -70,25 +84,29 @@
     },
     "earthworm": {
       "points": 50,
-      "move_speed": 3,
-      "lifetime": 300
+      "eatable": true,
+      "lifetime": 180,
+      "spawn_delay": 60
     },
     "heavy_bee": {
-      "hp": 3,
+      "hp": 1,
       "points": 25,
-      "move_speed": 0.8,
+      "move_speed": 1.2,
       "body_radius": 22,
-      "fire_cooldown": 80,
-      "max_stingers": 4,
-      "stinger_speed": 2
+      "fire_cooldown": 120,
+      "burst_count": 6,
+      "burst_spread": 40,
+      "stinger_speed": 3
     },
     "scorpion": {
       "points": 12,
       "move_speed": 1.8,
+      "reaction_parried": "immune",
       "body_radius": 16,
       "orbit_speed": 1.0,
       "orbit_radius": 100,
-      "tail_length": 30,
+      "tail_length": 120,
+      "stinger_radius": 8,
       "lunge_cooldown": 150,
       "lunge_speed": 0.06,
       "lunge_duration": 40,
@@ -96,7 +114,10 @@
     }
   },
   "player": {
-    "follow_speed": 4
+    "follow_speed": 4,
+    "lives": 5,
+    "hp": 1,
+    "invuln_frames": 90
   },
   "scoring": {
     "combo_ink_threshold": 5,
